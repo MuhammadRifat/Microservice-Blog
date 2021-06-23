@@ -9,6 +9,7 @@ const Admin = () => {
     const handleNewPostBtn = () => {
         history.push("/new-post");
     }
+    
     return (
         <div className="md:flex">
             <div className="md:w-1/5 border-2 pl-4 py-4">

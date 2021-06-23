@@ -13,6 +13,7 @@ import NewPost from './components/Admin/NewPost/NewPost';
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -20,8 +21,8 @@ function App() {
   return (
     <>
       <Router>
-        <Header toggle={toggle}></Header>
-        <Dropdown isOpen={isOpen} toggle={toggle}></Dropdown>
+        <Header toggle={toggle} isVisible={isVisible} setIsVisible={setIsVisible}></Header>
+        <Dropdown isOpen={isOpen} toggle={toggle} setIsVisible={setIsVisible}></Dropdown>
         <Switch>
           <Route path="/home">
             <Home></Home>

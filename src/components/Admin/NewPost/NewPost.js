@@ -1,26 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios';
 
 const NewPost = () => {
-    const history = useHistory();
-    
-    const handleSubmit = () => {
+    const [post, setPost] = useState({});
 
+    const handleBlur = (e) => {
+        const newData = { ...post };
+        newData[e.target.name] = e.target.value;
+        setPost(newData);
+    }
+
+    const handleImageUpload = (event) => {
+        const imageData = new FormData();
+        imageData.set('key', 'c4ebb744a3b647feb62c85c668dcb1fa');
+        imageData.append('image', event.target.files[0]);
+
+        // upload image and generate a unique image url
+        axios.post('https://api.imgbb.com/1/upload',
+            imageData)
+            .then(function (response) {
+                const newData = { ...post };
+                newData.imageUrl = response.data.data.display_url;
+                setPost(newData);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    const history = useHistory();
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const newData = {
+            ...post,
+            likes: 0,
+            views: 0, 
+            date: new Date()
+        }
+        console.log(newData);
     }
     return (
         <div className="flex justify-center p-4">
             <div className="w-full md:w-3/4 lg:w-1/2">
                 <form onSubmit={handleSubmit}>
-                    <input className="w-full p-2 border-2 border-black border-opacity-50 rounded-md" type="text" name="title" placeholder="Title" />
-                    <textarea rows="13" className="w-full p-2 border-2 border-black border-opacity-50 rounded-md mt-4" type="text" name="content" placeholder="Content"></textarea>
-                    
-                    <label for="image" className="font-bold mt-4 text-gray-500 text-md">Cover Image</label>
-                    <input type="file" className="w-full border-2 border-black border-opacity-50 rounded-md" name="image" id="image" />
+                    <input className="w-full p-2 border-2 border-black border-opacity-50 rounded-md" type="text" onBlur={handleBlur} name="title" placeholder="Title" required/>
+                    <textarea rows="13" className="w-full p-2 border-2 border-black border-opacity-50 rounded-md mt-4" onBlur={handleBlur} type="text" name="content" placeholder="Content" required></textarea>
+
+                    <label htmlFor="image" className="font-bold mt-4 text-gray-500 text-md">Cover Image</label>
+                    <input type="file" className="w-full border-2 border-black border-opacity-50 rounded-md" onChange={handleImageUpload} name="image" id="image" required/>
 
                     <div className="text-center mt-8">
-                        <button type="submit" className="w-1/4 p-2 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-lg font-bold text-white text-lg"><FontAwesomeIcon icon={faArrowAltCircleRight} /> Publish</button>
+                        <button type="submit" onBlur={handleBlur} className="w-1/4 p-2 bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 rounded-lg font-bold text-white text-lg"><FontAwesomeIcon icon={faArrowAltCircleRight} /> Publish</button>
                     </div>
                 </form>
             </div>
