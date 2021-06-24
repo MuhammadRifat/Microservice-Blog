@@ -27,7 +27,7 @@ const NewPost = () => {
             imageData)
             .then(function (response) {
                 const newData = { ...post };
-                newData.imageUrl = response.data.data.display_url;
+                newData.coverImage = response.data.data.display_url;
                 setPost(newData);
                 setIsLoading(false);
             })
@@ -42,6 +42,9 @@ const NewPost = () => {
         setIsLoading(true);
         const newData = {
             ...post,
+            name: 'Muhammad Rifat',
+            email: 'hrifat450@gmail.com',
+            photo: 'https://lh3.googleusercontent.com/a-/AOh14GhI60DQjyEKY21qB3k4q7tadunurkISLIlC3HfA=s96-c',
             likes: 0,
             views: 0,
             date: new Date()
