@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { userContext } from '../../App';
 import logo from '../../Images/default-monochrome.svg';
+import avater from '../../Images/avater.png';
 
 const Header = ({ toggle, isVisible, setIsVisible }) => {
+    const [loggedInUser] = useContext(userContext);
     return (
         <nav className="flex justify-between items-center h-16 bg-white-500 text-black relative shadow-md font-mono" role="navigation">
             <Link to="/home" onClick={() => setIsVisible(true)}>
@@ -19,7 +22,15 @@ const Header = ({ toggle, isVisible, setIsVisible }) => {
             </div>
             <div className="pr-8 md:block hidden text-xl">
                 <Link to="/home" onClick={() => setIsVisible(true)} className="p-4">Blogs</Link>
-                <Link to="/admin" onClick={() => setIsVisible(false)} className="p-4">Admin</Link>
+                {loggedInUser.email ?
+                    <Link to="/dashboard" onClick={() => setIsVisible(false)} className="p-4">Dashboard</Link>
+                    :
+                    <Link to="/login" onClick={() => setIsVisible(false)} className="p-4">Login</Link>
+                }
+                {/* {
+                    loggedInUser.email &&
+                    <Link to="/dashboard"><img className="w-8 h-8 rounded-full" src={avater} alt="" /></Link>
+                } */}
             </div>
         </nav>
     );

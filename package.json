@@ -13,6 +13,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.1",
+    "firebase": "^8.6.8",
     "react": "^17.0.2",
     "react-awesome-spinners": "^1.3.1",
     "react-dom": "^17.0.2",
@@ -48,5 +49,17 @@
     "autoprefixer": "9",
     "postcss": "7",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "craco.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MuhammadRifat/Blog-Mall-Client.git"
+  },
+  "author": "rifat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MuhammadRifat/Blog-Mall-Client/issues"
+  },
+  "homepage": "https://github.com/MuhammadRifat/Blog-Mall-Client#readme"
 }

@@ -59,7 +59,7 @@ const NewPost = () => {
             .then(data => {
                 if (data) {
                     setIsLoading(false);
-                    history.push('/admin');
+                    history.push('/dashboard');
                 }
             })
     }

@@ -5,21 +5,26 @@ import {
   Route
 } from "react-router-dom";
 import Home from './components/Home/Home';
-import Admin from './components/Admin/Admin';
 import Header from './components/Header/Header';
 import Dropdown from './components/Header/Dropdown/Dropdown';
-import { useState } from 'react';
-import NewPost from './components/Admin/NewPost/NewPost';
+import { createContext, useState } from 'react';
+import NewPost from './components/Dashboard/NewPost/NewPost';
+import Login from './components/Login/Login';
+import Dashboard from './components/Dashboard/Dashboard';
+import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+
+export const userContext = createContext();
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
+  const [loggedInUser, setLoggedInUser] = useState({});
 
   const toggle = () => {
     setIsOpen(!isOpen);
   }
   return (
-    <>
+    <userContext.Provider value={[loggedInUser, setLoggedInUser]}>
       <Router>
         <Header toggle={toggle} isVisible={isVisible} setIsVisible={setIsVisible}></Header>
         <Dropdown isOpen={isOpen} toggle={toggle} setIsVisible={setIsVisible}></Dropdown>
@@ -27,18 +32,21 @@ function App() {
           <Route path="/home">
             <Home></Home>
           </Route>
-          <Route path="/admin">
-            <Admin></Admin>
+          <Route path="/login">
+            <Login></Login>
           </Route>
-          <Route path="/new-post">
+          <PrivateRoute path="/dashboard">
+            <Dashboard></Dashboard>
+          </PrivateRoute>
+          <PrivateRoute path="/new-post">
             <NewPost></NewPost>
-          </Route>
+          </PrivateRoute>
           <Route exact path="/">
             <Home></Home>
           </Route>
         </Switch>
       </Router>
-    </>
+    </userContext.Provider>
   );
 }
 
