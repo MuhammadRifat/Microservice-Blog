@@ -4,18 +4,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Loader from '../../Loader/Loader';
+import Header from '../../Header/Header';
+import Dropdown from '../../Header/Dropdown/Dropdown';
 
 const NewPost = () => {
     const [post, setPost] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
 
+    // handle new post data
     const handleBlur = (e) => {
         const newData = { ...post };
         newData[e.target.name] = e.target.value;
         setPost(newData);
     }
 
+    // handle cover image upload into imagebb website
     const handleImageUpload = (event) => {
         setIsLoading(true);
         const imageData = new FormData();
@@ -37,6 +41,7 @@ const NewPost = () => {
             });
     }
 
+    // submit blog data into the database
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
@@ -50,7 +55,7 @@ const NewPost = () => {
             date: new Date()
         }
 
-        fetch('http://localhost:5000/addPost', {
+        fetch('https://enigmatic-coast-10449.herokuapp.com/addPost', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newData)
@@ -63,7 +68,17 @@ const NewPost = () => {
                 }
             })
     }
+
+    // Fix navbar
+    const [isOpen, setIsOpen] = useState(false);
+    const toggle = () => {
+        setIsOpen(!isOpen);
+    }
+
     return (
+        <>
+            <Header toggle={toggle} isVisible={false}></Header>
+            <Dropdown isOpen={isOpen} toggle={toggle}></Dropdown>
         <div className="flex justify-center p-4">
             <div className="w-full md:w-3/4 lg:w-1/2">
                 {
@@ -83,6 +98,7 @@ const NewPost = () => {
                 </form>
             </div>
         </div>
+        </>
     );
 };
 

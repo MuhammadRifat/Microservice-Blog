@@ -6,6 +6,8 @@ import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import { userContext } from '../../App';
 import { firebaseConfigFrameWork, handleGoogleSignIn, handleLogIn, handleSignUp } from './LoginManager';
 import Loader from '../Loader/Loader';
+import Header from '../Header/Header';
+import Dropdown from '../Header/Dropdown/Dropdown';
 
 const Login = () => {
     // access firebase config
@@ -119,7 +121,7 @@ const Login = () => {
 
     // For using to reduce repetition code
     const handleLogInUser = (res, isReplace) => {
-        fetch('http://localhost:5000/isAdmin', {
+        fetch('https://enigmatic-coast-10449.herokuapp.com/isAdmin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -151,8 +153,17 @@ const Login = () => {
         userDetail.error = '';
         setUser(userDetail);
     }
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggle = () => {
+        setIsOpen(!isOpen);
+    }
+
     return (
-        <div>
+        <>
+            <Header toggle={toggle} isVisible={false}></Header>
+            <Dropdown isOpen={isOpen} toggle={toggle}></Dropdown>
             <div className="flex justify-center">
                 <div className="mt-4 w-4/5 lg:w-2/5 md:w-1/2">
                     <div className="bg-white p-4 border-2 rounded-md mb-5">
@@ -214,7 +225,7 @@ const Login = () => {
 
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
