@@ -82,6 +82,7 @@ const Dashboard = () => {
                             <div className="md:w-1/5 border-2 pl-4 py-4">
                                 <button onClick={handleNewPostBtn} className="border-2 rounded-lg p-2 px-4 shadow-md hover:shadow-xl font-bold text-green-700 text-lg"><FontAwesomeIcon icon={faPlus} /> New Post</button>
                             </div>
+                            
                             <div className=" border-2 md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
                                 {
                                     isLoading && <Loader />

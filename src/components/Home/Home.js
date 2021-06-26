@@ -35,12 +35,12 @@ const Home = () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({search: e.target.value})
+            body: JSON.stringify({ search: e.target.value })
         })
-        .then(res => res.json())
-        .then(data => {
-            setBlogs(data);
-        })
+            .then(res => res.json())
+            .then(data => {
+                setBlogs(data);
+            })
     }
 
     // Fix navbar
@@ -54,16 +54,18 @@ const Home = () => {
             <Header toggle={toggle} isVisible={true} handleSearch={handleSearch}></Header>
             <Dropdown isOpen={isOpen} toggle={toggle}></Dropdown>
             <div className="flex justify-center">
-                <div className="md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
+                <div className="flex justify-center">
                     {
                         isLoading && <Loader />
                     }
                     {
                         !isLoading && !blogs.length && <h3 className="text-red-500 text-center mt-3">No Blogs Found.</h3>
                     }
-                    {
-                        blogs.map(blog => <Blog blog={blog} handleBlog={handleBlog} isAdmin={false} key={blog._id}></Blog>)
-                    }
+                    <div className="md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
+                        {
+                            blogs.map(blog => <Blog blog={blog} handleBlog={handleBlog} isAdmin={false} key={blog._id}></Blog>)
+                        }
+                    </div>
                 </div>
             </div>
         </>
