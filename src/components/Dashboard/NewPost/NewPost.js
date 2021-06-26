@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowAltCircleRight } from '@fortawesome/free-solid-svg-icons'
@@ -6,8 +6,11 @@ import axios from 'axios';
 import Loader from '../../Loader/Loader';
 import Header from '../../Header/Header';
 import Dropdown from '../../Header/Dropdown/Dropdown';
+import { userContext } from '../../../App';
+import avater from '../../../Images/avater.png';
 
 const NewPost = () => {
+    const [loggedInUser] = useContext(userContext);
     const [post, setPost] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const history = useHistory();
@@ -47,9 +50,9 @@ const NewPost = () => {
         setIsLoading(true);
         const newData = {
             ...post,
-            name: 'Muhammad Rifat',
-            email: 'hrifat450@gmail.com',
-            photo: 'https://lh3.googleusercontent.com/a-/AOh14GhI60DQjyEKY21qB3k4q7tadunurkISLIlC3HfA=s96-c',
+            name: loggedInUser.name,
+            email: loggedInUser.email,
+            photo: loggedInUser.photo || avater,
             likes: 0,
             views: 0,
             date: new Date()
