@@ -54,7 +54,7 @@ const Home = () => {
             <Header toggle={toggle} isVisible={true} handleSearch={handleSearch}></Header>
             <Dropdown isOpen={isOpen} toggle={toggle}></Dropdown>
             <div className="flex justify-center">
-                <div className="md:w-4/5 lg:px-12 sm:px-2">
+                <div className="md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
                     {
                         isLoading && <Loader />
                     }

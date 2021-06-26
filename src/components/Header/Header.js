@@ -22,11 +22,11 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
             
             <div className="flex pr-8">
                 <div className="pr-8 md:block hidden text-xl">
-                    <Link to="/home" className="p-4">Blogs</Link>
+                    <Link to="/home" className="p-4 hover:bg-gray-300">Blogs</Link>
                     {loggedInUser.email ?
-                        <Link to="/dashboard" className="p-4">Dashboard</Link>
+                        <Link to="/dashboard" className="p-4 hover:bg-gray-300">Dashboard</Link>
                         :
-                        <Link to="/login" className="p-4">Login</Link>
+                        <Link to="/login" className="p-4 hover:bg-gray-300">Login</Link>
                     }
                 </div>
                 

@@ -8,8 +8,8 @@ const Blog = ({ blog, handleDeleteBtn, isAdmin, handleBlog }) => {
 
     // conditionally shows all blogs for admin and all users
     return (
-        <div className="lg:float-left lg:w-1/2">
-            <div onClick={!isAdmin ? () => handleBlog(_id) : undefined} className="m-3 shadow-md rounded-md hover:shadow-xl" style={!isAdmin ? {cursor: 'pointer'} : {}}>
+        <div className="lg:w-full">
+            <div onClick={!isAdmin ? () => handleBlog(_id) : undefined} className="mx-3 mt-5 shadow-md rounded-md hover:shadow-xl" style={!isAdmin ? {cursor: 'pointer'} : {}}>
                 <div>
                     <img className="w-full h-48 rounded-t-md" src={coverImage} alt="" />
                 </div>
