@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, HttpException, Query, UploadedFiles } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { MongoIdParams, IPaginate } from 'src/common/dto.common';
+import { MongoIdParams, IPaginate } from 'src/common/dtos/dto.common';
 import { ImageLibraryService } from './image-library.service';
 
 @Controller('image-library')

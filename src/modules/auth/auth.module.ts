@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { TeacherModule } from 'src/teacher/teacher.module';
+import { TeacherModule } from 'src/modules/teacher/teacher.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({

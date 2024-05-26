@@ -2,8 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query
 import { StudentService } from './student.service';
 import { CreateStudentDto, StudentLoginDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
-import { IPaginate, MongoIdParams } from 'src/common/dto.common';
-import { StudentAuthGuard } from 'src/auth/student-auth.guard';
+import { IPaginate, MongoIdParams } from 'src/common/dtos/dto.common';
+import { StudentAuthGuard } from 'src/modules/auth/student-auth.guard';
 
 @Controller('student')
 export class StudentController {

@@ -1,6 +1,6 @@
 import { BadRequestException, HttpException, HttpStatus } from "@nestjs/common";
 import { Model, Types } from "mongoose";
-import { IPaginate } from "./dto.common";
+import { IPaginate } from "../dtos/dto.common";
 
 export class Service<TDoc> {
     private DEFAULT_LIMIT = 10;

@@ -2,9 +2,9 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query
 import { TeacherService } from './teacher.service';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
-import { IPaginate, MongoIdParams } from 'src/common/dto.common';
+import { IPaginate, MongoIdParams } from 'src/common/dtos/dto.common';
 import { LoginDto } from './dto/login-teacher.dto';
-import { TeacherAuthGuard } from 'src/auth/teacher-auth.guard';
+import { TeacherAuthGuard } from 'src/modules/auth/teacher-auth.guard';
 
 @Controller('teacher')
 export class TeacherController {

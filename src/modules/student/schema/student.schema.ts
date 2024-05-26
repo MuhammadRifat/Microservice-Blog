@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose from "mongoose";
-import { CommonSchema } from "src/common/schema.common";
+import { CommonSchema } from "src/common/schemas/schema.common";
 
 @Schema({ timestamps: true })
 export class Student extends CommonSchema {

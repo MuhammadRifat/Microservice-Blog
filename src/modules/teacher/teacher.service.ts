@@ -1,11 +1,11 @@
 import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
 import { UpdateTeacherDto } from './dto/update-teacher.dto';
-import { Service } from 'src/common/service.common';
+import { Service } from 'src/common/services/service.common';
 import { Teacher } from './schema/teacher.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { IPaginate } from 'src/common/dto.common';
+import { IPaginate } from 'src/common/dtos/dto.common';
 import { LoginDto } from './dto/login-teacher.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';

@@ -2,13 +2,13 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { UpdateImageLibraryDto } from './dto/update-image-library.dto';
 import { randomInt } from 'crypto';
 import { Model, Types } from 'mongoose';
-import { IPaginate } from 'src/common/dto.common';
+import { IPaginate } from 'src/common/dtos/dto.common';
 import * as sharp from 'sharp';
 import { parse } from 'path';
 import { ImageLibrary } from './schema/image-library.schema';
-import { Service } from 'src/common/service.common';
+import { Service } from 'src/common/services/service.common';
 import { InjectModel } from '@nestjs/mongoose';
-import { S3Service } from 'src/s3/s3.service';
+import { S3Service } from 'src/common/modules/s3/s3.service';
 
 @Injectable()
 export class ImageLibraryService extends Service<ImageLibrary> {
