@@ -16,7 +16,7 @@ export class Service<TDoc> {
     }
 
     // create many
-    protected async createMany(createDataDto: TDoc[]) {
+    protected async createMany(createDataDto: object[]) {
         return await this.model.insertMany(createDataDto);
     }
 

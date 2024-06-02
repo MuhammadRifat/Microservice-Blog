@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Service } from 'src/common/services/service.common';
@@ -6,13 +6,13 @@ import { User } from './schema/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { IPaginate } from 'src/common/dtos/dto.common';
-import { LoginDto } from './dto/login-user.dto';
-import { JwtService } from '@nestjs/jwt';
+import { CreateBlogDto } from '../blog/dto/create-blog.dto';
+import { BlogService } from '../blog/blog.service';
 
 @Injectable()
 export class UserService extends Service<User> {
   constructor(
-    @InjectModel(User.name) userModel: Model<User>,
+    @InjectModel(User.name) private userModel: Model<User>
   ) {
     super(userModel);
   }

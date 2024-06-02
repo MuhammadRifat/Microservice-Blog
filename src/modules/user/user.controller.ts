@@ -1,11 +1,14 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IPaginate, MongoIdParams } from 'src/common/dtos/dto.common';
 import { LoginDto } from './dto/login-user.dto';
 import { UserAuthGuard } from 'src/common/guards/user-auth.guard';
 import { UserService } from './user.service';
+import { ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }

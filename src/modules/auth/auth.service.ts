@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import mongoose from "mongoose";
+import { BlogService } from "../blog/blog.service";
 
 
 
@@ -12,7 +13,7 @@ import mongoose from "mongoose";
 export class AuthService {
     constructor(
         private userService: UserService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
     ) { }
 
     // user login 

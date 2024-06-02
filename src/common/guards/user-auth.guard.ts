@@ -12,8 +12,7 @@ import { UserService } from 'src/modules/user/user.service';
 @Injectable()
 export class UserAuthGuard implements CanActivate {
     constructor(
-        private jwtService: JwtService,
-        private userService: UserService
+        private jwtService: JwtService
         ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -30,8 +29,8 @@ export class UserAuthGuard implements CanActivate {
                 }
             );
 
-            const user = await this.userService.findOne(payload._id);
-            request['user'] = user;
+            // const user = await this.userService.findOne(payload._id);
+            request['user'] = payload;
         } catch {
             throw new UnauthorizedException();
         }
