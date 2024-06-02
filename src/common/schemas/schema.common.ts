@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 @Schema()
 export class CommonSchema {
     @Prop({ default: true })
-    is_active: boolean;
+    isActive: boolean;
 
     @Prop({ default: null })
     createdBy: mongoose.Schema.Types.ObjectId;

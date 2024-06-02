@@ -7,9 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
-import { TeacherModule } from './modules/teacher/teacher.module';
+import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { StudentModule } from './modules/student/student.module';
 
 @Module({
   imports: [
@@ -22,9 +21,8 @@ import { StudentModule } from './modules/student/student.module';
     }),
     ImageLibraryModule,
     S3Module,
-    TeacherModule,
+    UserModule,
     AuthModule,
-    StudentModule
   ],
   controllers: [AppController],
   providers: [AppService],

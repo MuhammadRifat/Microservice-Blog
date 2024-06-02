@@ -1,6 +1,7 @@
-import { BadRequestException, HttpException, HttpStatus } from "@nestjs/common";
+import { BadRequestException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { IPaginate } from "../dtos/dto.common";
+import * as bcrypt from 'bcrypt';
 
 export class Service<TDoc> {
     private DEFAULT_LIMIT = 10;
@@ -11,7 +12,7 @@ export class Service<TDoc> {
     // create new
     protected async createOne(createDataDto: object) {
         const newData = new this.model(createDataDto);
-        return await newData.save();
+        return (await newData.save())?.toJSON();
     }
 
     // create many
@@ -31,12 +32,12 @@ export class Service<TDoc> {
 
     // find one document
     protected async findOneById(id: Types.ObjectId) {
-        return await this.model.findOne({ _id: id, deletedAt: null });
+        return (await this.model.findOne({ _id: id, deletedAt: null }))?.toJSON();
     }
 
     // find one document
     protected async findOneByQuery(query: object) {
-        return await this.model.findOne({ ...query, deletedAt: null });
+        return (await this.model.findOne({ ...query, deletedAt: null }))?.toJSON();
     }
 
     // search by property with case-insensitive & any character
@@ -53,12 +54,7 @@ export class Service<TDoc> {
 
     // update one document
     protected async updateById(id: Types.ObjectId, updateDataDto: object) {
-        const data = await this.model.findByIdAndUpdate(id, updateDataDto, { new: true });
-
-        if (!data) {
-            throw new HttpException('Failed to update', HttpStatus.BAD_REQUEST);
-        }
-
+        const data = (await this.model.findByIdAndUpdate(id, updateDataDto, { new: true }))?.toJSON();
         return data;
     }
 
@@ -71,7 +67,7 @@ export class Service<TDoc> {
 
     // delete one by id
     protected async removeById(id: Types.ObjectId) {
-        return await this.model.findOneAndUpdate({ _id: id, deletedAt: null }, { deletedAt: new Date() }, { new: true });
+        return (await this.model.findOneAndUpdate({ _id: id, deletedAt: null }, { deletedAt: new Date() }, { new: true }))?.toJSON();
     }
 
     // delete by query
@@ -258,11 +254,4 @@ export class Service<TDoc> {
             .replace(/[\s_-]+/g, "-")
             .replace(/^-+|-+$/g, "");
     };
-
-    // auto password generator
-    protected generatePassword(length: number) {
-        const randomValue = Math.random() * Math.pow(10, length);
-
-        return 'P' + Math.floor(randomValue);
-    }
 }
