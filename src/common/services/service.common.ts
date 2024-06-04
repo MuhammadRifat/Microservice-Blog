@@ -26,8 +26,55 @@ export class Service<TDoc> {
     // }
 
     // find all documents by query
-    protected async findAllByQuery(query: object) {
-        return await this.model.find({ ...query, deletedAt: null });
+    protected async findAllByQuery(query: object, paginate: IPaginate) {
+        const page = Math.abs(Number(paginate?.page || 0) || this.DEFAULT_PAGE);
+        const limit = Math.abs(Number(paginate?.limit || 0) || this.DEFAULT_LIMIT);
+
+        let totalIndexPromise: Promise<any>;
+        let totalDeletedIndexPromise: Promise<any>;
+
+
+        if (Object.keys(query).length) {
+            totalIndexPromise = this.model.countDocuments({ ...query, deletedAt: null });
+        } else {
+            totalIndexPromise = this.model.estimatedDocumentCount();
+            totalDeletedIndexPromise = this.model.countDocuments({ deletedAt: { $ne: null } });
+        }
+
+        const dataPromise = this.model.find({ ...query, deletedAt: null })
+            .sort({ createdAt: -1 })
+            .skip(limit * (page - 1))
+            .limit(limit)
+            .exec();
+
+        const promiseArray = [dataPromise, totalIndexPromise];
+        if (totalDeletedIndexPromise) {
+            promiseArray.push(totalDeletedIndexPromise);
+        }
+
+        const [data, totalNotDeletedIndex, totalDeletedIndex] = await Promise.all(promiseArray);
+
+        const totalIndex = totalNotDeletedIndex - (totalDeletedIndex || 0);
+
+        const totalPage = Math.ceil(totalIndex / limit);
+        const paginationInfo = {
+            totalIndex,
+            totalPage,
+            currentPage: page,
+            nextPage: totalPage > page ? page + 1 : null,
+            previousPage: page > 1 ? page - 1 : null,
+            startingIndex: limit * (page - 1) + 1,
+            endingIndex: limit * page,
+            itemsOnCurrentPage: Math.min(limit, totalIndex - limit * (page - 1)),
+            limit,
+            sortBy: 'createdAt',
+            sortOrder: -1
+        };
+
+        return {
+            page: paginationInfo,
+            data,
+        }
     }
 
     // find one document
@@ -49,7 +96,7 @@ export class Service<TDoc> {
             modifiedQuery[key] = newValue;
         });
 
-        return await this.findAllByQuery({ ...modifiedQuery, deletedAt: null });
+        return await this.model.find({ ...modifiedQuery, deletedAt: null });
     }
 
     // update one document
@@ -181,11 +228,11 @@ export class Service<TDoc> {
         const page = Math.abs(Number(paginate?.page || 0) || this.DEFAULT_PAGE);
         const limit = Math.abs(Number(paginate?.limit || 0) || this.DEFAULT_LIMIT);
 
-        if (query['is_active'] == 'true' || query['is_active'] == 1) {
-            query['is_active'] = true;
-        } else if (query['is_active'] == 'false' || query['is_active'] == 0) {
-            query['is_active'] = false;
-        }
+        // if (query['is_active'] == 'true' || query['is_active'] == 1) {
+        //     query['is_active'] = true;
+        // } else if (query['is_active'] == 'false' || query['is_active'] == 0) {
+        //     query['is_active'] = false;
+        // }
 
         // sort
         const sortModified = {};
