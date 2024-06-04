@@ -48,10 +48,11 @@ export class AuthController {
         @Req() req
     ) {
         try {
-
+            const user = await this.authService.userProfile(req.user._id);
+            
             return {
                 success: true,
-                data: req.user
+                data: user
             }
         } catch (error) {
             throw new HttpException(error.message, error.status);

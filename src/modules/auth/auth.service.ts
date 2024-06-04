@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { LoginDto } from "./dto/auth.dto";
 import { UserService } from "../user/user.service";
 import * as bcrypt from 'bcrypt';
@@ -19,6 +19,9 @@ export class AuthService {
     // user login 
     async userLogin(loginDto: LoginDto) {
         const user = await this.userService.findUserByQuery({ email: loginDto.email });
+        if (!user) {
+            throw new NotFoundException('user not found');
+        }
         const isMatch = await bcrypt.compare(loginDto.password, user.password);
         if (!isMatch) {
             throw new UnauthorizedException('password mismatch!');
@@ -33,14 +36,21 @@ export class AuthService {
 
     // user registration 
     async userRegistration(createUserDto: CreateUserDto) {
-        createUserDto.password = await this.generateHash(createUserDto.password);
-
         const user = await this.userService.create(createUserDto);
         const payload = { _id: user._id };
+
         return {
             access_token: await this.generateToken(payload),
             data: user
         };
+    }
+
+    // get user profile
+    async userProfile(id: mongoose.Types.ObjectId) {
+        const user = await this.userService.findOne(id);
+        delete user?.password;
+
+        return user;
     }
 
     // generate hash

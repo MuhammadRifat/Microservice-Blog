@@ -35,7 +35,7 @@ export class BlogService extends Service<Blog> {
       restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
     }
 
-    return await this.findByPaginate(restQuery, { page, limit });
+    return await this.findAllByQuery(restQuery, { page, limit });
   }
 
   // find blog by id

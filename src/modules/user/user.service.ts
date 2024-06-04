@@ -6,8 +6,7 @@ import { User } from './schema/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { IPaginate } from 'src/common/dtos/dto.common';
-import { CreateBlogDto } from '../blog/dto/create-blog.dto';
-import { BlogService } from '../blog/blog.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService extends Service<User> {
@@ -24,12 +23,13 @@ export class UserService extends Service<User> {
       throw new BadRequestException('email already exist');
     }
 
+    createUserDto.password = await this.generateHash(createUserDto.password);
     return await this.createOne(createUserDto);
   }
 
   // find all by paginate
   async findAll(paginate: IPaginate) {
-    return await this.findByPaginate({}, paginate);
+    return await this.findAllByQuery({}, paginate);
   }
 
   // find user by id
@@ -45,10 +45,6 @@ export class UserService extends Service<User> {
   // find user by any query
   async findUserByQuery(query: object) {
     const data = await this.findOneByQuery(query);
-    if (!data) {
-      throw new NotFoundException('user not found');
-    }
-
     return data;
   }
 
@@ -72,5 +68,10 @@ export class UserService extends Service<User> {
     }
 
     return data;
+  }
+
+  private async generateHash(plainPassword: string) {
+    const salt = await bcrypt.genSalt();
+    return await bcrypt.hash(plainPassword, salt);
   }
 }
