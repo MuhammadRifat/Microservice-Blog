@@ -4,14 +4,15 @@ import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Service } from 'src/common/services/service.common';
 import { Blog } from './schema/blog.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model, Types } from 'mongoose';
-import { IPaginate } from 'src/common/dtos/dto.common';
+import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryBlogDto } from './dto/query-blog.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class BlogService extends Service<Blog> {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
+    private userService: UserService
   ) {
     super(blogModel);
   }
@@ -35,7 +36,44 @@ export class BlogService extends Service<Blog> {
       restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
     }
 
-    return await this.findAllByQuery(restQuery, { page, limit });
+    const blogs = await this.findAllByQuery(restQuery, { page, limit });
+    const userIds = blogs?.data?.map(blog => blog.authorId);
+    const users = await this.userService.findIn(userIds, this.userService.notSelect);
+
+
+    return this.generateRelationalResponse(blogs, users, 'author');
+  }
+
+  async findAllWithPopulate(queryBlogDto: QueryBlogDto) {
+    const { page, limit, ...restQuery } = queryBlogDto;
+
+    if (restQuery.authorId) {
+      restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
+    }
+
+    const lookupStages: PipelineStage[] = [];
+    lookupStages.push(
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: {
+          path: '$user',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    );
+
+    return await this.findByQueryFilterAndPopulate({
+      query: restQuery,
+      paginate: { page, limit },
+      lookupStages
+    });
   }
 
   // find blog by id

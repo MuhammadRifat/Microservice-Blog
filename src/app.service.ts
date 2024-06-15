@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
   getHello() {
+    return 'Hello World!';
     const used = process.memoryUsage();
     const upTime = process.uptime();
     // const cpuUsage = process.cpuUsage();

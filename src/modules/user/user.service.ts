@@ -10,6 +10,12 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService extends Service<User> {
+  public notSelect = {
+    password: 0,
+    createdAt: 0,
+    updatedAt: 0
+  };
+  
   constructor(
     @InjectModel(User.name) private userModel: Model<User>
   ) {
@@ -29,7 +35,7 @@ export class UserService extends Service<User> {
 
   // find all by paginate
   async findAll(paginate: IPaginate) {
-    return await this.findAllByQuery({}, paginate);
+    return await this.findAllByQuery({}, paginate, this.notSelect);
   }
 
   // find user by id

@@ -7,6 +7,12 @@ export class Service<TDoc> {
     private DEFAULT_LIMIT = 10;
     private DEFAULT_PAGE = 1;
 
+    private GLOBAL_NOT_SELECT = {
+        deletedAt: 0,
+        __v: 0,
+        createdBy: 0
+    };
+
     constructor(private readonly model: Model<TDoc>) { }
 
     // create new
@@ -21,12 +27,12 @@ export class Service<TDoc> {
     }
 
     // find all documents
-    // async findAll(paginate?: IPaginate) {
-    //     return await this.findByPaginate({}, paginate);
-    // }
+    async findIn(ids: Types.ObjectId[], notSelect?: object) {
+        return await this.model.find({ _id: { $in: ids } }).select({ ...notSelect, ...this.GLOBAL_NOT_SELECT });
+    }
 
     // find all documents by query
-    protected async findAllByQuery(query: object, paginate: IPaginate) {
+    async findAllByQuery(query: object, paginate?: IPaginate, notSelect?: object) {
         const page = Math.abs(Number(paginate?.page || 0) || this.DEFAULT_PAGE);
         const limit = Math.abs(Number(paginate?.limit || 0) || this.DEFAULT_LIMIT);
 
@@ -45,6 +51,7 @@ export class Service<TDoc> {
             .sort({ createdAt: -1 })
             .skip(limit * (page - 1))
             .limit(limit)
+            .select({ ...notSelect, ...this.GLOBAL_NOT_SELECT })
             .exec();
 
         const promiseArray = [dataPromise, totalIndexPromise];
@@ -78,17 +85,19 @@ export class Service<TDoc> {
     }
 
     // find one document
-    protected async findOneById(id: Types.ObjectId) {
-        return (await this.model.findOne({ _id: id, deletedAt: null }))?.toJSON();
+    async findOneById(id: Types.ObjectId, notSelect?: object) {
+        return (await this.model.findOne({ _id: id, deletedAt: null })
+            .select({ ...notSelect, ...this.GLOBAL_NOT_SELECT }))?.toJSON();
     }
 
     // find one document
-    protected async findOneByQuery(query: object) {
-        return (await this.model.findOne({ ...query, deletedAt: null }))?.toJSON();
+    async findOneByQuery(query: object, notSelect?: object) {
+        return (await this.model.findOne({ ...query, deletedAt: null })
+            .select({ ...notSelect, ...this.GLOBAL_NOT_SELECT }))?.toJSON();
     }
 
     // search by property with case-insensitive & any character
-    protected async searchByAnyCharacter(query: object) {
+    async searchByAnyCharacter(query: object) {
         let modifiedQuery = {};
 
         Object.keys(query).map(key => {
@@ -96,7 +105,7 @@ export class Service<TDoc> {
             modifiedQuery[key] = newValue;
         });
 
-        return await this.model.find({ ...modifiedQuery, deletedAt: null });
+        return await this.findAllByQuery({ ...modifiedQuery, deletedAt: null });
     }
 
     // update one document
@@ -162,7 +171,7 @@ export class Service<TDoc> {
 
 
     // find by paginate
-    protected async findByPaginate(query: object = {}, paginate?: IPaginate, lookupStages: any[] = []) {
+    async findByPaginate(query: object = {}, paginate?: IPaginate, lookupStages: any[] = []) {
         const page = Math.abs(Number(paginate?.page || 0) || this.DEFAULT_PAGE);
         const limit = Math.abs(Number(paginate?.limit || 0) || this.DEFAULT_LIMIT);
 
@@ -301,4 +310,24 @@ export class Service<TDoc> {
             .replace(/[\s_-]+/g, "-")
             .replace(/^-+|-+$/g, "");
     };
+
+    // generate response
+    protected generateRelationalResponse(rootData: { page: any, data: any[] }, subData: any[], fieldName: string) {
+
+        const subMap = new Map(subData?.map(user => [String(user._id), user]));
+        const response = rootData?.data?.map(blog => {
+            const target = subMap.get(String(blog.authorId));
+
+
+            return {
+                ...blog.toJSON(),
+                [fieldName]: target
+            };
+        });
+
+        return {
+            page: rootData.page,
+            data: response
+        };
+    }
 }
