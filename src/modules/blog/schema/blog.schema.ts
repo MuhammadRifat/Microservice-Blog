@@ -18,14 +18,17 @@ export class Blog extends CommonSchema {
     @Prop([String])
     tags: string[];
 
-    @Prop({ default: 0 })
-    likes: number;
-
     @Prop({ default: 'draft' })
     status: string;
 
     @Prop({ default: null })
     image: string;
+
+    @Prop({ default: 0 })
+    likes: number;
+    
+    @Prop({ default: 0 })
+    views: number;
 }
 
 export const blogSchema = SchemaFactory.createForClass(Blog);

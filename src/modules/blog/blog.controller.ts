@@ -17,7 +17,7 @@ export class BlogController {
   async create(
     @Body() createBlogDto: CreateBlogDto,
     @Req() req
-    ) {
+  ) {
     try {
       createBlogDto.authorId = req.user._id;
       const data = await this.blogService.create(createBlogDto);
@@ -31,11 +31,30 @@ export class BlogController {
     }
   }
 
+  @Get('bulk-create')
+  async bulkCreate() {
+    try {
+      return await this.blogService.createAll();
+
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Get()
-  @UseGuards(UserAuthGuard)
   async findAll(@Query() queryBlogDto: QueryBlogDto) {
     try {
       return await this.blogService.findAll(queryBlogDto);
+
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('search')
+  async search(@Body('search') search: string) {
+    try {
+      return await this.blogService.search(search);
 
     } catch (error) {
       throw new HttpException(error.message, error.status);
@@ -46,11 +65,13 @@ export class BlogController {
   @Get(':id')
   async findOne(@Param() { id }: MongoIdParams) {
     try {
-      const data = await this.blogService.findOne(id);
+      const data = await this.blogService.findAll({ _id: id });
 
+      // increment views  
+      this.blogService.incrementViews(id);
       return {
         success: true,
-        data
+        data: data.data?.[0]
       }
     } catch (error) {
       throw new HttpException(error.message, error.status);
@@ -58,6 +79,7 @@ export class BlogController {
   }
 
   @Patch(':id')
+  @UseGuards(UserAuthGuard)
   async update(@Param() { id }: MongoIdParams, @Body() updateBlogDto: UpdateBlogDto) {
     try {
       const data = await this.blogService.update(id, updateBlogDto);
@@ -72,6 +94,7 @@ export class BlogController {
   }
 
   @Delete(':id')
+  @UseGuards(UserAuthGuard)
   async remove(@Param() { id }: MongoIdParams) {
     try {
       const data = await this.blogService.remove(id);

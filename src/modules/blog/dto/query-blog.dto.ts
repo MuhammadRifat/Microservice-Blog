@@ -14,6 +14,10 @@ export class QueryBlogDto extends IPaginate {
     authorId?: mongoose.Types.ObjectId;
 
     @IsOptional()
+    @IsString()
+    _id?: mongoose.Types.ObjectId;
+
+    @IsOptional()
     @IsString({ each: true })
     tags?: string[];
 

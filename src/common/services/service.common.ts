@@ -78,9 +78,10 @@ export class Service<TDoc> {
             sortOrder: -1
         };
 
+        const responseData: any[] = data;
         return {
             page: paginationInfo,
-            data,
+            data: responseData,
         }
     }
 

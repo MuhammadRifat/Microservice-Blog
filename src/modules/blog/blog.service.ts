@@ -23,9 +23,19 @@ export class BlogService extends Service<Blog> {
     return await this.createOne(createBlogDto);
   }
 
-  async createAll(createBlogDto: CreateBlogDto[]) {
+  async createAll() {
+    const users = await this.userService.findAllByQuery({}, { page: 1, limit: 1000000 }, { ...this.userService.notSelect, email: 0, isActive: 0, isVerified: 0 });
+    const blogs: CreateBlogDto[] = users.data?.map((user, index) => {
+      return {
+        title: `2nd phase auto generated blogs ${index}`,
+        content: "2nd phase auto generated blogs",
+        authorId: user._id,
+        image: "default.png",
+      }
+    });
 
-    return await this.createMany(createBlogDto);
+    this.createMany(blogs);
+    return blogs.length;
   }
 
   // find all by paginate
@@ -36,12 +46,20 @@ export class BlogService extends Service<Blog> {
       restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
     }
 
+    if (restQuery._id) {
+      restQuery._id = new mongoose.Types.ObjectId(restQuery._id);
+    }
+
     const blogs = await this.findAllByQuery(restQuery, { page, limit });
     const userIds = blogs?.data?.map(blog => blog.authorId);
     const users = await this.userService.findIn(userIds, this.userService.notSelect);
 
 
     return this.generateRelationalResponse(blogs, users, 'author');
+  }
+
+  async search(title: string) {
+    return await this.searchByAnyCharacter({ title: title });
   }
 
   async findAllWithPopulate(queryBlogDto: QueryBlogDto) {
@@ -105,6 +123,15 @@ export class BlogService extends Service<Blog> {
     }
 
     return data;
+  }
+
+  // increments views
+  async incrementViews(id: Types.ObjectId) {
+    try {
+      await this.updateById(id, { $inc: { views: 1 } });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // remove blog by id

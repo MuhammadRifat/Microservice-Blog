@@ -1,14 +1,15 @@
 import { IsBoolean, IsEmail, IsEnum, IsMobilePhone, IsMongoId, IsNotEmpty, IsNumberString, IsOptional, IsString, isEnum } from "class-validator";
+import mongoose from "mongoose";
 import { Types } from "mongoose";
 
 export class IPaginate {
     @IsOptional()
     @IsNumberString()
-    limit: number;
+    limit?: number;
 
     @IsOptional()
     @IsNumberString()
-    page: number;
+    page?: number;
 }
 
 export class QueryCommonDto extends IPaginate {
@@ -28,7 +29,7 @@ export class QueryCommonDto extends IPaginate {
 export class MongoIdParams {
     @IsNotEmpty()
     @IsMongoId()
-    id: Types.ObjectId;
+    id: mongoose.Types.ObjectId;
 }
 
 
