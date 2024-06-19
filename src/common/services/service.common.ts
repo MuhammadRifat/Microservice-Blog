@@ -313,16 +313,32 @@ export class Service<TDoc> {
     };
 
     // generate response
-    protected generateRelationalResponse(rootData: { page: any, data: any[] }, subData: any[], fieldName: string) {
+    protected generateOneToOneRelation(
+        {
+            rootData,
+            foreignData,
+            targetField,
+            rootField,
+            foreignField
+        }
+            :
+            {
+                rootData: { page: any, data: any[] },
+                foreignData: any[],
+                rootField: string,
+                foreignField: string,
+                targetField: string
+            }
+    ) {
 
-        const subMap = new Map(subData?.map(user => [String(user._id), user]));
-        const response = rootData?.data?.map(blog => {
-            const target = subMap.get(String(blog.authorId));
+        const subMap = new Map(foreignData?.map(item => [String(item[foreignField]), item]));
+        const response = rootData?.data?.map(item => {
+            const target = subMap.get(String(item[rootField]));
 
 
             return {
-                ...blog.toJSON(),
-                [fieldName]: target
+                ...item.toJSON(),
+                [targetField]: target
             };
         });
 

@@ -10,6 +10,7 @@ import { join } from 'path';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BlogModule } from './modules/blog/blog.module';
+import { LikeModule } from './modules/like/like.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { BlogModule } from './modules/blog/blog.module';
     S3Module,
     UserModule,
     AuthModule,
-    BlogModule
+    BlogModule,
+    LikeModule
   ],
   controllers: [AppController],
   providers: [AppService],

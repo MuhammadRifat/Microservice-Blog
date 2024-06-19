@@ -55,7 +55,16 @@ export class BlogService extends Service<Blog> {
     const users = await this.userService.findIn(userIds, this.userService.notSelect);
 
 
-    return this.generateRelationalResponse(blogs, users, 'author');
+    return this.generateOneToOneRelation(
+      {
+        rootData: blogs,
+        foreignData: users,
+        rootField: 'authorId',
+        foreignField: '_id',
+        targetField: 'author'
+      }
+    );
+
   }
 
   async search(title: string) {
@@ -129,6 +138,23 @@ export class BlogService extends Service<Blog> {
   async incrementViews(id: Types.ObjectId) {
     try {
       await this.updateById(id, { $inc: { views: 1 } });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // increments views
+  async incrementLikes(id: Types.ObjectId) {
+    try {
+      await this.updateById(id, { $inc: { likes: 1 } });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async decrementLikes(id: Types.ObjectId) {
+    try {
+      await this.updateById(id, { $inc: { likes: -1 } });
     } catch (error) {
       console.log(error);
     }

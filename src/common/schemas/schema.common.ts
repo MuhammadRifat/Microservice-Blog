@@ -11,4 +11,7 @@ export class CommonSchema {
 
     @Prop({ default: null })
     deletedAt: Date;
+
+    createdAt: Date;
+    updatedAt: Date;
 }
