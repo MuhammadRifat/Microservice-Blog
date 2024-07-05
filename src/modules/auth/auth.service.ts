@@ -5,7 +5,6 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { CreateUserDto } from "../user/dto/create-user.dto";
 import mongoose from "mongoose";
-import { BlogService } from "../blog/blog.service";
 
 
 
