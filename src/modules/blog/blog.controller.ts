@@ -31,15 +31,15 @@ export class BlogController {
     }
   }
 
-  @Get('bulk-create')
-  async bulkCreate() {
-    try {
-      return await this.blogService.createAll();
+  // @Get('bulk-create')
+  // async bulkCreate() {
+  //   try {
+  //     return await this.blogService.createAll();
 
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
-  }
+  //   } catch (error) {
+  //     throw new HttpException(error.message, error.status);
+  //   }
+  // }
 
   @Get()
   async findAll(@Query() queryBlogDto: QueryBlogDto) {

@@ -6,13 +6,10 @@ import { Blog } from './schema/blog.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryBlogDto } from './dto/query-blog.dto';
-import { UserService } from '../user/user.service';
-
 @Injectable()
 export class BlogService extends Service<Blog> {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
-    private userService: UserService
   ) {
     super(blogModel);
   }
@@ -23,20 +20,20 @@ export class BlogService extends Service<Blog> {
     return await this.createOne(createBlogDto);
   }
 
-  async createAll() {
-    const users = await this.userService.findAllByQuery({}, { page: 1, limit: 1000000 }, { ...this.userService.notSelect, email: 0, isActive: 0, isVerified: 0 });
-    const blogs: CreateBlogDto[] = users.data?.map((user, index) => {
-      return {
-        title: `2nd phase auto generated blogs ${index}`,
-        content: "2nd phase auto generated blogs",
-        authorId: user._id,
-        image: "default.png",
-      }
-    });
+  // async createAll() {
+  //   const users = await this.userService.findAllByQuery({}, { page: 1, limit: 1000000 }, { ...this.userService.notSelect, email: 0, isActive: 0, isVerified: 0 });
+  //   const blogs: CreateBlogDto[] = users.data?.map((user, index) => {
+  //     return {
+  //       title: `2nd phase auto generated blogs ${index}`,
+  //       content: "2nd phase auto generated blogs",
+  //       authorId: user._id,
+  //       image: "default.png",
+  //     }
+  //   });
 
-    this.createMany(blogs);
-    return blogs.length;
-  }
+  //   this.createMany(blogs);
+  //   return blogs.length;
+  // }
 
   // find all by paginate
   async findAll(queryBlogDto: QueryBlogDto) {
@@ -51,19 +48,20 @@ export class BlogService extends Service<Blog> {
     }
 
     const blogs = await this.findAllByQuery(restQuery, { page, limit });
-    const userIds = blogs?.data?.map(blog => blog.authorId);
-    const users = await this.userService.findIn(userIds, this.userService.notSelect);
+    return blogs;
+    // const userIds = blogs?.data?.map(blog => blog.authorId);
+    // const users = await this.userService.findIn(userIds, this.userService.notSelect);
 
 
-    return this.generateOneToOneRelation(
-      {
-        rootData: blogs,
-        foreignData: users,
-        rootField: 'authorId',
-        foreignField: '_id',
-        targetField: 'author'
-      }
-    );
+    // return this.generateOneToOneRelation(
+    //   {
+    //     rootData: blogs,
+    //     foreignData: users,
+    //     rootField: 'authorId',
+    //     foreignField: '_id',
+    //     targetField: 'author'
+    //   }
+    // );
 
   }
 

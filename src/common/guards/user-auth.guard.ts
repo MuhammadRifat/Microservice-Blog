@@ -5,15 +5,13 @@ import {
     Injectable,
     UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
-import { UserService } from 'src/modules/user/user.service';
+import axios from 'axios';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {
     constructor(
-        private jwtService: JwtService
-        ) { }
+    ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -22,12 +20,10 @@ export class UserAuthGuard implements CanActivate {
             throw new UnauthorizedException();
         }
         try {
-            const payload = await this.jwtService.verifyAsync(
-                token,
-                {
-                    secret: process.env.JWT_SECRET
-                }
-            );
+            const payload = await axios.post(`${process.env.AUTH_URL}/auth/user/validate-token`, {
+                token
+            });
+            console.log(payload);
 
             // const user = await this.userService.findOne(payload._id);
             request['user'] = payload;

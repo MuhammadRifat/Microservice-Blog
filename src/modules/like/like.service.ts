@@ -5,7 +5,6 @@ import { Service } from 'src/common/services/service.common';
 import { Like } from './schema/like.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
-import { UserService } from '../user/user.service';
 import { QueryLikeDto } from './dto/query-like.dto';
 import { BlogService } from '../blog/blog.service';
 
@@ -13,7 +12,7 @@ import { BlogService } from '../blog/blog.service';
 export class LikeService extends Service<Like> {
   constructor(
     @InjectModel(Like.name) private likeModel: Model<Like>,
-    private userService: UserService,
+    // private userService: UserService,
     private blogService: BlogService,
   ) {
     super(likeModel);
@@ -50,18 +49,19 @@ export class LikeService extends Service<Like> {
     }
 
     const likes = await this.findAllByQuery(restQuery, { page, limit });
-    const userIds = likes?.data?.map(like => like.userId);
-    const users = await this.userService.findIn(userIds, this.userService.notSelect);
+    return likes;
+    // const userIds = likes?.data?.map(like => like.userId);
+    // const users = await this.userService.findIn(userIds, this.userService.notSelect);
 
-    return this.generateOneToOneRelation(
-      {
-        rootData: likes,
-        foreignData: users,
-        rootField: 'userId',
-        foreignField: '_id',
-        targetField: 'user'
-      }
-    );
+    // return this.generateOneToOneRelation(
+    //   {
+    //     rootData: likes,
+    //     foreignData: users,
+    //     rootField: 'userId',
+    //     foreignField: '_id',
+    //     targetField: 'user'
+    //   }
+    // );
   }
 
 
