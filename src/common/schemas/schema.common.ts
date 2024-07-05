@@ -2,7 +2,7 @@ import { Prop, Schema } from "@nestjs/mongoose";
 import mongoose from "mongoose";
 
 @Schema()
-export class CommonSchema {
+export class MongoCommonSchema {
     @Prop({ default: true })
     isActive: boolean;
 
@@ -14,4 +14,11 @@ export class CommonSchema {
 
     createdAt: Date;
     updatedAt: Date;
+}
+
+export class MysqlCommonSchema {
+    id: number;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date | null;
 }

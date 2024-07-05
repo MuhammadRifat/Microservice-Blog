@@ -12,6 +12,17 @@ export class IPaginate {
     page?: number;
 }
 
+export class IPaginateMysql {
+    @IsOptional()
+    @IsNumberString()
+    perPage?: number;
+
+    @IsOptional()
+    @IsNumberString()
+    currentPage?: number;
+}
+
+
 export class QueryCommonDto extends IPaginate {
     @IsOptional()
     @IsString()

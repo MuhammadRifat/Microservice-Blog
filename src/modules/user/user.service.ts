@@ -1,46 +1,46 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Service } from 'src/common/services/service.common';
-import { User } from './schema/user.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-import { IPaginate } from 'src/common/dtos/dto.common';
-import * as bcrypt from 'bcrypt';
+import { InjectConnection } from 'nest-knexjs';
+import { Knex } from 'knex';
+import { IUser } from './schema/user.schema';
+import { MysqlService } from 'src/common/services/mysql-service.common';
+import { IPaginate, IPaginateMysql } from 'src/common/dtos/dto.common';
+import { DB_TABLES } from 'src/common/enums/db.enum';
 
 @Injectable()
-export class UserService extends Service<User> {
-  public notSelect = {
-    password: 0,
-    createdAt: 0,
-    updatedAt: 0
-  };
-  
-  constructor(
-    @InjectModel(User.name) private userModel: Model<User>
-  ) {
-    super(userModel);
+export class UserService extends MysqlService<IUser> {
+  constructor(@InjectConnection() private knex: Knex) {
+    super(knex, DB_TABLES.USER);
   }
 
-  // user register
+  // create one
   async create(createUserDto: CreateUserDto) {
-    const user = await this.findOneByQuery({ email: createUserDto.email });
-    if (user) {
-      throw new BadRequestException('email already exist');
+    const [isExitUser] = await this.knex.table(DB_TABLES.USER)
+      .where({ email: createUserDto.email });
+
+    if (isExitUser) {
+      throw new BadRequestException('user already exist.');
     }
 
-    createUserDto.password = await this.generateHash(createUserDto.password);
-    return await this.createOne(createUserDto);
+    const user = await this.createOne(createUserDto);
+    delete user?.password;
+    return user;
   }
 
   // find all by paginate
-  async findAll(paginate: IPaginate) {
-    return await this.findAllByQuery({}, paginate, this.notSelect);
+  async findAll(paginate: IPaginateMysql) {
+    return await this.findWithPaginate(paginate);
   }
 
-  // find user by id
-  async findOne(id: Types.ObjectId) {
+  async findOneUserByQuery(query: object) {
+    return await this.findOneByQuery(query);
+  }
+
+  // find one by id
+  async findOne(id: number) {
     const data = await this.findOneById(id);
+
     if (!data) {
       throw new NotFoundException('user not found');
     }
@@ -48,36 +48,29 @@ export class UserService extends Service<User> {
     return data;
   }
 
-  // find user by any query
-  async findUserByQuery(query: object) {
-    const data = await this.findOneByQuery(query);
-    return data;
-  }
-
   // update user by id
-  async update(id: Types.ObjectId, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    if (!Object.keys(updateUserDto).length) {
+      throw new BadRequestException('must have a property');
+    }
+
     const data = await this.updateById(id, updateUserDto);
 
     if (!data) {
-      throw new BadRequestException('update failed.');
+      throw new InternalServerErrorException('update failed');
     }
 
     return data;
   }
 
-  // remove user by id
-  async remove(id: Types.ObjectId) {
+  // delete user by id
+  async remove(id: number) {
     const data = await this.removeById(id);
 
     if (!data) {
-      throw new BadRequestException('delete failed.');
+      throw new InternalServerErrorException('delete failed');
     }
 
     return data;
-  }
-
-  private async generateHash(plainPassword: string) {
-    const salt = await bcrypt.genSalt();
-    return await bcrypt.hash(plainPassword, salt);
   }
 }

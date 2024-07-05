@@ -4,7 +4,6 @@ import { UserService } from "../user/user.service";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { CreateUserDto } from "../user/dto/create-user.dto";
-import mongoose from "mongoose";
 
 
 
@@ -17,7 +16,7 @@ export class AuthService {
 
     // user login 
     async userLogin(loginDto: LoginDto) {
-        const user = await this.userService.findUserByQuery({ email: loginDto.email });
+        const user = await this.userService.findOneByQuery({ email: loginDto.email });
         if (!user) {
             throw new NotFoundException('user not found');
         }
@@ -26,7 +25,8 @@ export class AuthService {
             throw new UnauthorizedException('password mismatch!');
         }
 
-        const payload = { _id: user._id };
+        delete user.password;
+        const payload = { id: user.id };
         return {
             access_token: await this.generateToken(payload),
             data: user
@@ -35,8 +35,9 @@ export class AuthService {
 
     // user registration 
     async userRegistration(createUserDto: CreateUserDto) {
+        createUserDto.password = await this.generateHash(createUserDto.password);
         const user = await this.userService.create(createUserDto);
-        const payload = { _id: user._id };
+        const payload = { id: user.id };
 
         return {
             access_token: await this.generateToken(payload),
@@ -45,8 +46,8 @@ export class AuthService {
     }
 
     // get user profile
-    async userProfile(id: mongoose.Types.ObjectId) {
-        const user = await this.userService.findOne(id);
+    async userProfile(id: number) {
+        const user = await this.userService.findOneById(id);
         delete user?.password;
 
         return user;

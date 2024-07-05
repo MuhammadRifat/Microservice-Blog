@@ -3,7 +3,7 @@ import { Model, Types } from "mongoose";
 import { IPaginate } from "../dtos/dto.common";
 import * as bcrypt from 'bcrypt';
 
-export class Service<TDoc> {
+export class MongooseService<TDoc> {
     private DEFAULT_LIMIT = 10;
     private DEFAULT_PAGE = 1;
 

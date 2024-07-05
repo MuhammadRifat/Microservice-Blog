@@ -48,7 +48,7 @@ export class AuthController {
         @Req() req
     ) {
         try {
-            const user = await this.authService.userProfile(req.user._id);
+            const user = await this.authService.userProfile(req.user.id);
             
             return {
                 success: true,
