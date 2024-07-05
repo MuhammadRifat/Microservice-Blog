@@ -23,10 +23,14 @@ export class UserAuthGuard implements CanActivate {
             const payload = await axios.post(`${process.env.AUTH_URL}/auth/user/validate-token`, {
                 token
             });
-            console.log(payload);
+            const user = payload.data?.data;
+
+            if(!user) {
+                throw new UnauthorizedException();
+            }
 
             // const user = await this.userService.findOne(payload._id);
-            request['user'] = payload;
+            request['user'] = user;
         } catch {
             throw new UnauthorizedException();
         }

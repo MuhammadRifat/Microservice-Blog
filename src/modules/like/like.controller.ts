@@ -19,7 +19,7 @@ export class LikeController {
     @Req() req
   ) {
     try {
-      createLikeDto.userId = req.user._id;
+      createLikeDto.userId = req.user.id;
       const data = await this.likeService.create(createLikeDto);
       return {
         success: true,

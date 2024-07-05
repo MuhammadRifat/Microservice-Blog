@@ -12,8 +12,8 @@ export class Blog extends CommonSchema {
     @Prop({ required: true })
     content: string;
 
-    @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true })
-    authorId: Types.ObjectId;
+    @Prop({ type: Number, required: true, index: true })
+    authorId: number;
 
     @Prop([String])
     tags: string[];
@@ -26,7 +26,7 @@ export class Blog extends CommonSchema {
 
     @Prop({ default: 0 })
     likes: number;
-    
+
     @Prop({ default: 0 })
     views: number;
 }
