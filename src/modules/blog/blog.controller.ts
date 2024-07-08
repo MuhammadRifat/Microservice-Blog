@@ -19,8 +19,7 @@ export class BlogController {
     @Req() req
   ) {
     try {
-      createBlogDto.authorId = req.user.id;
-      const data = await this.blogService.create(createBlogDto);
+      const data = await this.blogService.create(req.user, createBlogDto);
 
       return {
         success: true,

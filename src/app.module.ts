@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { BlogModule } from './modules/blog/blog.module';
 import { LikeModule } from './modules/like/like.module';
+import { RabbitMQService } from './rabbitmq/rabbitmq.service';
 
 @Module({
   imports: [
@@ -16,6 +17,6 @@ import { LikeModule } from './modules/like/like.module';
     LikeModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RabbitMQService],
 })
 export class AppModule { }

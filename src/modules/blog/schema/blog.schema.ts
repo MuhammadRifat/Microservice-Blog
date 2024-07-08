@@ -1,8 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document, Types } from 'mongoose';
 import { CommonSchema } from 'src/common/schemas/schema.common';
+import { Author, AuthorSchema } from './author.schema';
 
 export type BlogDocument = Blog & Document;
+
 
 @Schema({ timestamps: true })
 export class Blog extends CommonSchema {
@@ -14,6 +16,9 @@ export class Blog extends CommonSchema {
 
     @Prop({ type: Number, required: true, index: true })
     authorId: number;
+
+    @Prop({ type: AuthorSchema, required: true })
+    author: Author;
 
     @Prop([String])
     tags: string[];

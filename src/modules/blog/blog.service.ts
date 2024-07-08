@@ -6,17 +6,26 @@ import { Blog } from './schema/blog.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryBlogDto } from './dto/query-blog.dto';
+import amqp from 'amqplib/callback_api';
+import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
 @Injectable()
 export class BlogService extends Service<Blog> {
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
+    private rabbitMQService: RabbitMQService
   ) {
     super(blogModel);
   }
 
   // blog register
-  async create(createBlogDto: CreateBlogDto) {
+  async create(user, createBlogDto: CreateBlogDto) {
 
+    createBlogDto.authorId = user.id;
+    createBlogDto.author = {
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      image: user.image || null
+    };
     return await this.createOne(createBlogDto);
   }
 
@@ -48,6 +57,7 @@ export class BlogService extends Service<Blog> {
     }
 
     const blogs = await this.findAllByQuery(restQuery, { page, limit });
+    await this.rabbitMQService.sendNotification("test");
     return blogs;
     // const userIds = blogs?.data?.map(blog => blog.authorId);
     // const users = await this.userService.findIn(userIds, this.userService.notSelect);
@@ -64,6 +74,7 @@ export class BlogService extends Service<Blog> {
     // );
 
   }
+
 
   async search(title: string) {
     return await this.searchByAnyCharacter({ title: title });
