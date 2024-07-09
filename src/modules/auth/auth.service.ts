@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { LoginDto } from "./dto/auth.dto";
 import { UserService } from "../user/user.service";
 import * as bcrypt from 'bcrypt';
@@ -53,6 +53,20 @@ export class AuthService {
         return user;
     }
 
+    async validateToken(token: string) {
+        if (!token) {
+            throw new BadRequestException('token is required');
+        }
+        const payload = await this.verifyToken(token);
+        const user = await this.userService.findOneById(payload?.id);
+
+        if (!user) {
+            throw new UnauthorizedException();
+        }
+        delete user.password;
+        return user;
+    }
+
     // generate hash
     private async generateHash(plainPassword: string) {
         const salt = await bcrypt.genSalt();
@@ -70,5 +84,17 @@ export class AuthService {
         return await this.jwtService.signAsync(payload, {
             secret: process.env.JWT_SECRET,
         });
+    }
+
+    // verify token
+    private async verifyToken(token: string) {
+        const payload = await this.jwtService.verifyAsync(
+            token,
+            {
+                secret: process.env.JWT_SECRET
+            }
+        );
+
+        return payload;
     }
 }

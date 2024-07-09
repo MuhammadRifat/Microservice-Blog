@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
-import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { RabbitmqModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_TEACHER_SECRET,
       signOptions: { expiresIn: '365d' },
     }),
+    RabbitmqModule
   ],
   controllers: [UserController],
   providers: [UserService],

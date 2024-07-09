@@ -9,6 +9,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { KnexModule } from 'nest-knexjs';
 import knexConfig from 'config/knex-config';
+import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import knexConfig from 'config/knex-config';
       envFilePath: '.env'
     }),
     KnexModule.forRoot(knexConfig),
+    RabbitmqModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectConnection } from 'nest-knexjs';
@@ -7,10 +7,15 @@ import { IUser } from './schema/user.schema';
 import { MysqlService } from 'src/common/services/mysql-service.common';
 import { IPaginate, IPaginateMysql } from 'src/common/dtos/dto.common';
 import { DB_TABLES } from 'src/common/enums/db.enum';
+import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class UserService extends MysqlService<IUser> {
-  constructor(@InjectConnection() private knex: Knex) {
+
+  constructor(
+    @InjectConnection() private knex: Knex,
+    private readonly rabbitmqService: RabbitmqService,
+  ) {
     super(knex, DB_TABLES.USER);
   }
 
@@ -25,6 +30,14 @@ export class UserService extends MysqlService<IUser> {
 
     const user = await this.createOne(createUserDto);
     delete user?.password;
+
+    console.log('user created. Publishing Rabbitmq event');
+    await this.rabbitmqService.publish(
+      'user_management',
+      'user_created_routing_key',
+      { type: 'rider', ...user },
+    );
+    console.log('Event published successful');
     return user;
   }
 

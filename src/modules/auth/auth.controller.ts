@@ -42,6 +42,20 @@ export class AuthController {
         }
     }
 
+    @Post('user/validate-token')
+    async validateToken(@Body('token') token: string) {
+        try {
+            const data = await this.authService.validateToken(token);
+
+            return {
+                success: true,
+                data
+            }
+        } catch (error) {
+            throw new HttpException(error.message, error.status);
+        }
+    }
+
     @Get('user')
     @UseGuards(UserAuthGuard)
     async getProfile(
@@ -49,7 +63,7 @@ export class AuthController {
     ) {
         try {
             const user = await this.authService.userProfile(req.user.id);
-            
+
             return {
                 success: true,
                 data: user

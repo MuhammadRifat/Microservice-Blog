@@ -7,9 +7,6 @@ export class MongoCommonSchema {
     isActive: boolean;
 
     @Prop({ default: null })
-    createdBy: mongoose.Schema.Types.ObjectId;
-
-    @Prop({ default: null })
     deletedAt: Date;
 
     createdAt: Date;
