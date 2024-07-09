@@ -1,9 +1,10 @@
-import { Body, Controller, Get, HttpException, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/auth.dto';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserAuthGuard } from 'src/common/guards/user-auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from '../user/dto/update-user.dto';
 
 
 @ApiTags('Auth')
@@ -63,6 +64,24 @@ export class AuthController {
     ) {
         try {
             const user = await this.authService.userProfile(req.user.id);
+
+            return {
+                success: true,
+                data: user
+            }
+        } catch (error) {
+            throw new HttpException(error.message, error.status);
+        }
+    }
+
+    @Patch('user/update')
+    @UseGuards(UserAuthGuard)
+    async userUpdateProfile(
+        @Body() updateUserDto: UpdateUserDto,
+        @Req() req
+    ) {
+        try {
+            const user = await this.authService.userProfileUpdate(req.user, updateUserDto);
 
             return {
                 success: true,

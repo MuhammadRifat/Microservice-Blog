@@ -9,14 +9,6 @@ dotenv.config();
     RabbitMQModule.forRoot(RabbitMQModule, {
       exchanges: [
         {
-          name: 'shop',
-          type: 'topic',
-        },
-        {
-          name: 'notification',
-          type: 'topic',
-        },
-        {
           name: 'user_management',
           type: 'topic',
         },
@@ -31,4 +23,4 @@ dotenv.config();
   exports: [RabbitMQModule, RabbitmqService],
   providers: [RabbitmqService],
 })
-export class RabbitmqModule {}
+export class RabbitmqModule { }

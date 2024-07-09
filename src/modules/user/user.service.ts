@@ -34,8 +34,8 @@ export class UserService extends MysqlService<IUser> {
     console.log('user created. Publishing Rabbitmq event');
     await this.rabbitmqService.publish(
       'user_management',
-      'user_created_routing_key',
-      { type: 'rider', ...user },
+      'user_created',
+      user,
     );
     console.log('Event published successful');
     return user;
@@ -67,13 +67,20 @@ export class UserService extends MysqlService<IUser> {
       throw new BadRequestException('must have a property');
     }
 
-    const data = await this.updateById(id, updateUserDto);
+    const user = await this.updateById(id, updateUserDto);
 
-    if (!data) {
+    if (!user) {
       throw new InternalServerErrorException('update failed');
     }
 
-    return data;
+    console.log('user updated. Publishing Rabbitmq event');
+    await this.rabbitmqService.publish(
+      'user_management',
+      'user_updated',
+      user,
+    );
+    console.log('Event published successful');
+    return user;
   }
 
   // delete user by id

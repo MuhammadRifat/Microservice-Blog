@@ -4,6 +4,7 @@ import { UserService } from "../user/user.service";
 import * as bcrypt from 'bcrypt';
 import { JwtService } from "@nestjs/jwt";
 import { CreateUserDto } from "../user/dto/create-user.dto";
+import { UpdateUserDto } from "../user/dto/update-user.dto";
 
 
 
@@ -51,6 +52,11 @@ export class AuthService {
         delete user?.password;
 
         return user;
+    }
+
+    // update user profile
+    async userProfileUpdate(user, updateUserDto: UpdateUserDto) {
+        return await this.userService.update(user.id, updateUserDto);
     }
 
     async validateToken(token: string) {
