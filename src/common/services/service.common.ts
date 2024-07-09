@@ -16,13 +16,13 @@ export class Service<TDoc> {
     constructor(private readonly model: Model<TDoc>) { }
 
     // create new
-    protected async createOne(createDataDto: object) {
+    async createOne(createDataDto: object) {
         const newData = new this.model(createDataDto);
         return (await newData.save())?.toJSON();
     }
 
     // create many
-    protected async createMany(createDataDto: object[]) {
+    async createMany(createDataDto: object[]) {
         return await this.model.insertMany(createDataDto);
     }
 
@@ -110,25 +110,25 @@ export class Service<TDoc> {
     }
 
     // update one document
-    protected async updateById(id: Types.ObjectId, updateDataDto: object) {
+    async updateById(id: Types.ObjectId, updateDataDto: object) {
         const data = (await this.model.findByIdAndUpdate(id, updateDataDto, { new: true }))?.toJSON();
         return data;
     }
 
     // update one document by query
-    protected async updateByQuery(query: object, updateDataDto: object) {
+    async updateByQuery(query: object, updateDataDto: object) {
         const data = await this.model.findOneAndUpdate(query, updateDataDto, { new: true });
 
         return data;
     }
 
     // delete one by id
-    protected async removeById(id: Types.ObjectId) {
+    async removeById(id: Types.ObjectId) {
         return (await this.model.findOneAndUpdate({ _id: id, deletedAt: null }, { deletedAt: new Date() }, { new: true }))?.toJSON();
     }
 
     // delete by query
-    protected async removeByQuery(query: object) {
+    async removeByQuery(query: object) {
         return await this.model.updateMany({ ...query, deletedAt: null }, { deletedAt: new Date() });
     }
 

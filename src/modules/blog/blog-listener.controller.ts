@@ -1,20 +1,20 @@
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { Controller } from '@nestjs/common';
+import { BlogService } from './blog.service';
 
 @Controller()
 export class BlogListenerController {
-    // constructor(private readonly userService: BlogService) { }
+    constructor(private readonly blogService: BlogService) { }
 
+    // update author when user updated
     @RabbitSubscribe({
         exchange: 'user_management',
-        routingKey: 'user_created_routing_key',
+        routingKey: 'user_updated',
     })
-    public async userCreatedListener(msg) {
+    public async userUpdatedListener(user) {
         try {
-            // const { id, type, ...rest } = msg;
-            // const userDto: BlogDto = { ...rest, user_id: id };
-            console.log('user created event captured: ', msg);
-            // await this.userService.createBlog(userDto);
+            console.log('user updated event captured: ', user);
+            await this.blogService.updateAuthor(user);
         } catch (error) {
             console.log(error);
         }

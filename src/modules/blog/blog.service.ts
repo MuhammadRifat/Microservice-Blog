@@ -128,6 +128,21 @@ export class BlogService extends Service<Blog> {
     return data;
   }
 
+  async updateAuthor(author) {
+    const result = await this.blogModel.updateMany(
+      { 'author.id': author.id },
+      {
+        $set: {
+          'author.name': author.firstName + ' ' + author.lastName,
+          'author.image': author.image,
+          updatedAt: new Date(),
+        },
+      },
+    );
+
+    return result;
+  }
+
   // increments views
   async incrementViews(id: Types.ObjectId) {
     try {
