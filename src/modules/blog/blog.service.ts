@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
 import { Service } from 'src/common/services/service.common';
@@ -6,13 +6,12 @@ import { Blog } from './schema/blog.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryBlogDto } from './dto/query-blog.dto';
-import amqp from 'amqplib/callback_api';
-import { RabbitMQService } from 'src/rabbitmq/rabbitmq.service';
+import { ClientProxy } from '@nestjs/microservices';
 @Injectable()
 export class BlogService extends Service<Blog> {
+
   constructor(
     @InjectModel(Blog.name) private blogModel: Model<Blog>,
-    private rabbitMQService: RabbitMQService
   ) {
     super(blogModel);
   }
@@ -57,21 +56,7 @@ export class BlogService extends Service<Blog> {
     }
 
     const blogs = await this.findAllByQuery(restQuery, { page, limit });
-    await this.rabbitMQService.sendNotification("test");
     return blogs;
-    // const userIds = blogs?.data?.map(blog => blog.authorId);
-    // const users = await this.userService.findIn(userIds, this.userService.notSelect);
-
-
-    // return this.generateOneToOneRelation(
-    //   {
-    //     rootData: blogs,
-    //     foreignData: users,
-    //     rootField: 'authorId',
-    //     foreignField: '_id',
-    //     targetField: 'author'
-    //   }
-    // );
 
   }
 
