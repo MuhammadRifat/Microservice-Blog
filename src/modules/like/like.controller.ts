@@ -19,8 +19,7 @@ export class LikeController {
     @Req() req
   ) {
     try {
-      createLikeDto.userId = req.user.id;
-      const data = await this.likeService.create(createLikeDto);
+      const data = await this.likeService.create(req.user, createLikeDto);
       return {
         success: true,
         data
@@ -36,21 +35,6 @@ export class LikeController {
     try {
       return await this.likeService.findAll(queryLikeDto);
 
-    } catch (error) {
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  @Patch(':id')
-  @UseGuards(UserAuthGuard)
-  async update(@Param() { id }: MongoIdParams, @Body() updateLikeDto: UpdateLikeDto) {
-    try {
-      const data = await this.likeService.update(id, updateLikeDto);
-
-      return {
-        success: true,
-        data
-      }
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }

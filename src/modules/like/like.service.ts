@@ -6,28 +6,39 @@ import { Like } from './schema/like.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryLikeDto } from './dto/query-like.dto';
-import { BlogService } from '../blog/blog.service';
+import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class LikeService extends Service<Like> {
   constructor(
     @InjectModel(Like.name) private likeModel: Model<Like>,
-    // private userService: UserService,
-    private blogService: BlogService,
+    private readonly rabbitmqService: RabbitmqService,
   ) {
     super(likeModel);
   }
 
   // like register
-  async create(createLikeDto: CreateLikeDto) {
+  async create(user, createLikeDto: CreateLikeDto) {
+    createLikeDto.userId = user.id;
+    createLikeDto.user = {
+      id: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      image: user.image || null
+    };
+
     const isExist = await this.findOneByQuery({ blogId: createLikeDto.blogId, userId: createLikeDto.userId });
     if (isExist) {
       throw new BadRequestException('already liked');
     }
 
     const like = await this.createOne(createLikeDto);
-    // increment likes
-    this.blogService.incrementLikes(createLikeDto.blogId);
+    console.log('like created. Publishing Rabbitmq event');
+    await this.rabbitmqService.publish(
+      'blog_management',
+      'like_created',
+      like,
+    );
+    console.log('Event published successful');
 
     return like;
   }
@@ -75,15 +86,19 @@ export class LikeService extends Service<Like> {
     return data;
   }
 
-  // update like by id
-  async update(id: Types.ObjectId, updateLikeDto: UpdateLikeDto) {
-    const data = await this.updateById(id, updateLikeDto);
+  async updateUser(user) {
+    const result = await this.likeModel.updateMany(
+      { userId: user.id },
+      {
+        $set: {
+          'user.name': user.firstName + ' ' + user.lastName,
+          'user.image': user.image,
+          updatedAt: new Date(),
+        },
+      },
+    );
 
-    if (!data) {
-      throw new BadRequestException('update failed.');
-    }
-
-    return data;
+    return result;
   }
 
   // remove like by id
@@ -94,7 +109,7 @@ export class LikeService extends Service<Like> {
       throw new BadRequestException('delete failed.');
     }
 
-    this.blogService.decrementLikes(data.blogId);
+    // this.blogService.decrementLikes(data.blogId);
     return data;
   }
 }
