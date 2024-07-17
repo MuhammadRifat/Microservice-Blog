@@ -68,11 +68,11 @@ export class UserService extends MysqlService<IUser> {
     }
 
     const user = await this.updateById(id, updateUserDto);
-
     if (!user) {
       throw new InternalServerErrorException('update failed');
     }
 
+    delete user?.password;
     console.log('user updated. Publishing Rabbitmq event');
     await this.rabbitmqService.publish(
       'user_management',
