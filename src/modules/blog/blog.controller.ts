@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards, BadRequestException } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -50,10 +50,21 @@ export class BlogController {
     }
   }
 
-  @Post('search')
-  async search(@Body('search') search: string) {
+  @Get('search')
+  async search(@Query('q') q: string) {
     try {
-      return await this.blogService.search(search);
+      return await this.blogService.search(q);
+
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('auth/search')
+  @UseGuards(UserAuthGuard)
+  async authSearch(@Query('q') q: string, @Req() req) {
+    try {
+      return await this.blogService.search(q, req.user.id);
 
     } catch (error) {
       throw new HttpException(error.message, error.status);

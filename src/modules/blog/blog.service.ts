@@ -6,7 +6,6 @@ import { Blog } from './schema/blog.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model, PipelineStage, Types } from 'mongoose';
 import { QueryBlogDto } from './dto/query-blog.dto';
-import { ClientProxy } from '@nestjs/microservices';
 @Injectable()
 export class BlogService extends Service<Blog> {
 
@@ -22,7 +21,7 @@ export class BlogService extends Service<Blog> {
     createBlogDto.authorId = user.id;
     createBlogDto.author = {
       id: user.id,
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${user.firstName || ''} ${user.lastName || ''}`,
       image: user.image || null
     };
     return await this.createOne(createBlogDto);
@@ -47,10 +46,6 @@ export class BlogService extends Service<Blog> {
   async findAll(queryBlogDto: QueryBlogDto) {
     const { page, limit, ...restQuery } = queryBlogDto;
 
-    if (restQuery.authorId) {
-      restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
-    }
-
     if (restQuery._id) {
       restQuery._id = new mongoose.Types.ObjectId(restQuery._id);
     }
@@ -61,40 +56,9 @@ export class BlogService extends Service<Blog> {
   }
 
 
-  async search(title: string) {
-    return await this.searchByAnyCharacter({ title: title });
-  }
-
-  async findAllWithPopulate(queryBlogDto: QueryBlogDto) {
-    const { page, limit, ...restQuery } = queryBlogDto;
-
-    if (restQuery.authorId) {
-      restQuery.authorId = new mongoose.Types.ObjectId(restQuery.authorId);
-    }
-
-    const lookupStages: PipelineStage[] = [];
-    lookupStages.push(
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'authorId',
-          foreignField: '_id',
-          as: 'user',
-        },
-      },
-      {
-        $unwind: {
-          path: '$user',
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-    );
-
-    return await this.findByQueryFilterAndPopulate({
-      query: restQuery,
-      paginate: { page, limit },
-      lookupStages
-    });
+  async search(title: string, authorId?: number) {
+    const staticQuery = authorId ? { authorId } : {};
+    return await this.searchByAnyCharacter({ title: title }, staticQuery);
   }
 
   // find blog by id
@@ -130,7 +94,7 @@ export class BlogService extends Service<Blog> {
 
   async updateAuthor(author) {
     const result = await this.blogModel.updateMany(
-      { 'author.id': author.id },
+      { authorId: author.id },
       {
         $set: {
           'author.name': author.firstName + ' ' + author.lastName,
@@ -164,6 +128,23 @@ export class BlogService extends Service<Blog> {
   async decrementLikes(id: Types.ObjectId) {
     try {
       await this.updateById(id, { $inc: { likes: -1 } });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  // increments views
+  async incrementComments(id: Types.ObjectId) {
+    try {
+      await this.updateById(id, { $inc: { comments: 1 } });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async decrementComments(id: Types.ObjectId) {
+    try {
+      await this.updateById(id, { $inc: { comments: -1 } });
     } catch (error) {
       console.log(error);
     }

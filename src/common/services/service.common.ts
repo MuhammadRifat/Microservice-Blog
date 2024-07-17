@@ -98,7 +98,7 @@ export class Service<TDoc> {
     }
 
     // search by property with case-insensitive & any character
-    async searchByAnyCharacter(query: object) {
+    async searchByAnyCharacter(query: object, staticQuery: object = {}) {
         let modifiedQuery = {};
 
         Object.keys(query).map(key => {
@@ -106,7 +106,7 @@ export class Service<TDoc> {
             modifiedQuery[key] = newValue;
         });
 
-        return await this.findAllByQuery({ ...modifiedQuery, deletedAt: null });
+        return await this.findAllByQuery({ ...modifiedQuery, ...staticQuery, deletedAt: null });
     }
 
     // update one document

@@ -12,6 +12,10 @@ dotenv.config();
           name: 'user_management',
           type: 'topic',
         },
+        {
+          name: 'blog_management',
+          type: 'topic',
+        },
       ],
       uri: process.env.RMQ_URL,
       connectionInitOptions: {

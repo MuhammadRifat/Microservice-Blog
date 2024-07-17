@@ -29,11 +29,29 @@ export class Blog extends CommonSchema {
     @Prop({ default: null })
     image: string;
 
-    @Prop({ default: 0 })
+    @Prop({
+        default: 0, validate: {
+            validator: Number.isInteger,
+            message: '{VALUE} is not an integer value'
+        }
+    })
     likes: number;
 
-    @Prop({ default: 0 })
+    @Prop({
+        default: 0, validate: {
+            validator: Number.isInteger,
+            message: '{VALUE} is not an integer value'
+        }
+    })
     views: number;
+
+    @Prop({
+        default: 0, validate: {
+            validator: Number.isInteger,
+            message: '{VALUE} is not an integer value'
+        }
+    })
+    comments: number;
 }
 
 export const blogSchema = SchemaFactory.createForClass(Blog);
