@@ -22,7 +22,7 @@ export class LikeService extends Service<Like> {
     createLikeDto.userId = user.id;
     createLikeDto.user = {
       id: user.id,
-      name: `${user.firstName} ${user.lastName}`,
+      name: `${user.firstName || ''} ${user.lastName || ''}`,
       image: user.image || null
     };
 
@@ -109,7 +109,13 @@ export class LikeService extends Service<Like> {
       throw new BadRequestException('delete failed.');
     }
 
-    // this.blogService.decrementLikes(data.blogId);
+    console.log('like deleted. Publishing Rabbitmq event');
+    await this.rabbitmqService.publish(
+      'blog_management',
+      'like_deleted',
+      data,
+    );
+    console.log('Event published successful');
     return data;
   }
 }
