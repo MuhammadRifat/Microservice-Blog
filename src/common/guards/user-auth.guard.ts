@@ -6,12 +6,16 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import axios from 'axios';
+import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {
     constructor(
-    ) { }
+
+        private readonly rabbitmqService: RabbitmqService,
+    ) {
+
+    }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();
@@ -20,18 +24,23 @@ export class UserAuthGuard implements CanActivate {
             throw new UnauthorizedException();
         }
         try {
-            const payload = await axios.post(`${process.env.AUTH_URL}/auth/user/validate-token`, {
-                token
-            });
-            const user = payload.data?.data;
+            const user = await this.rabbitmqService.request(
+                'user_management',
+                'validate_token_rpc',
+                { token }
+            );
+            
+            // const payload = await axios.post(`${process.env.AUTH_URL}/auth/user/validate-token`, {
+            //     token
+            // });
 
-            if(!user) {
+            if (!user) {
                 throw new UnauthorizedException();
             }
 
-            // const user = await this.userService.findOne(payload._id);
             request['user'] = user;
-        } catch {
+        } catch(error) {
+            console.log(error.message);
             throw new UnauthorizedException();
         }
         return true;

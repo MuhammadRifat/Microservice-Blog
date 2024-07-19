@@ -3,8 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { LikeModule } from './modules/like/like.module';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { ImageLibraryModule } from './modules/image-library/image-library.module';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
     }),
     RabbitmqModule,
     MongooseModule.forRoot(process.env.DB_URL),
-    LikeModule
+    ImageLibraryModule
   ],
   controllers: [AppController],
   providers: [AppService],

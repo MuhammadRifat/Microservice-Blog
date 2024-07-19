@@ -22,6 +22,7 @@ dotenv.config();
         wait: false,
       },
       enableControllerDiscovery: true,
+      queues: []
     }),
   ],
   exports: [RabbitMQModule, RabbitmqService],
