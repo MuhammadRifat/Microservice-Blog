@@ -2,7 +2,7 @@ import { IsEnum, IsMongoId, IsNotEmpty, IsOptional, IsString } from "class-valid
 import mongoose from "mongoose";
 import { IPaginate } from "src/common/dtos/dto.common";
 
-export class QueryLikeDto extends IPaginate {
+export class QueryCommentDto extends IPaginate {
 
     @IsOptional()
     @IsString()
