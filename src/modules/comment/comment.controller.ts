@@ -30,7 +30,6 @@ export class CommentController {
   }
 
   @Get()
-  @UseGuards(UserAuthGuard)
   async findAll(@Query() queryCommentDto: QueryCommentDto) {
     try {
       return await this.commentService.findAll(queryCommentDto);
