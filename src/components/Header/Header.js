@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { userContext } from '../../App';
+import { API_URL, userContext } from '../../App';
 import logo from '../../Images/default-monochrome.svg';
 import avater from '../../Images/avater.png';
 
@@ -19,7 +19,7 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
                 isVisible &&
                 <input type="text" onChange={(e) => handleSearch(e)} className="border-2 border-black border-opacity-25 rounded-md w-2/5 p-1" placeholder="Search" />
             }
-            
+
             <div className="flex pr-8">
                 <div className="pr-8 md:block hidden text-xl">
                     <Link to="/home" className="p-4 hover:bg-gray-300">Blogs</Link>
@@ -29,13 +29,13 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
                         <Link to="/login" className="p-4 hover:bg-gray-300">Login</Link>
                     }
                 </div>
-                
+
                 {
                     loggedInUser.email &&
-                    <img className=" ml-2 w-8 h-8 rounded-full" src={loggedInUser.photo || avater} alt="" />
+                    <img className=" ml-2 w-8 h-8 rounded-full" src={`${API_URL.IMAGE}${loggedInUser?.photo}`} alt="" />
                 }
             </div>
-               
+
             <div className="px-3 cursor-pointer md:hidden" onClick={toggle}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

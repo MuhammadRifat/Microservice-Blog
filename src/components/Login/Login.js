@@ -1,17 +1,14 @@
 import React, { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import './Login.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-import { userContext } from '../../App';
-import { firebaseConfigFrameWork, handleGoogleSignIn, handleLogIn, handleSignUp } from './LoginManager';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { API_URL, userContext } from '../../App';
+import { handleSignUp } from './LoginManager';
 import Loader from '../Loader/Loader';
 import Header from '../Header/Header';
 import Dropdown from '../Header/Dropdown/Dropdown';
 
 const Login = () => {
-    // access firebase config
-    firebaseConfigFrameWork();
     const [newUser, setNewUser] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [loggedInUser, setLoggedInUser] = useContext(userContext);
@@ -27,38 +24,38 @@ const Login = () => {
     });
     const history = useHistory();
 
-    // For using sign in with google
-    const googleSignIn = () => {
-        setIsLoading(true);
-        handleGoogleSignIn()
-            .then(res => {
-                if (res.email) {
-                    handleLogInUser(res, true);
-                }
-                else {
-                    const newUser = {
-                        error: res
-                    }
-                    setLoggedInUser(newUser);
-                    setIsLoading(false);
-                }
-            })
-    }
-
     // For using login and signup
     const handleSubmit = (event) => {
+        event.preventDefault();
         if (!newUser && user.email && user.password) {
             setIsLoading(true);
-            handleLogIn(user.email, user.password)
-                .then(res => {
-                    if (res.email) {
-                        handleLogInUser(res, true);
-                    }
-                    else {
+            fetch(`${API_URL.USER}/auth/user/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email: user.email, password: user.password })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
                         const newUser = {
-                            error: res
+                            email: data.data?.email,
+                            name: data.data?.firstName,
+                            error: '',
+                            photo: data.data?.image,
+                            isAdmin: true,
+                            token: data.access_token,
+                            ...data?.data
                         }
+                        localStorage.setItem('user', JSON.stringify(newUser));
                         setLoggedInUser(newUser);
+                        setIsLoading(false);
+                        history.replace('/dashboard');
+                    } else {
+                        const userDetail = { ...user };
+                        userDetail.error = data.error;
+                        setUser(userDetail);
                         setIsLoading(false);
                     }
                 })
@@ -66,22 +63,34 @@ const Login = () => {
         if (newUser && user.email && user.password && user.confirmPassword) {
             setIsLoading(true);
             if (user.password.length === user.confirmPassword.length) {
-                handleSignUp(user.name, user.email, user.confirmPassword)
-                    .then(res => {
-                        if (res.email) {
-                            handleLogInUser(res, false);
-                            const userDetail = { ...user };
-                            userDetail.error = "";
-                            setUser(userDetail);
-                            setIsLoading(false);
-                        }
-                        else {
+                setIsLoading(true);
+                fetch(`${API_URL.USER}/auth/user/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ firstName: user.name, email: user.email, password: user.password })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
                             const newUser = {
-                                error: res
+                                email: data.data?.email,
+                                name: data.data?.firstName,
+                                error: '',
+                                photo: data.data?.image,
+                                isAdmin: true,
+                                token: data.access_token,
+                                ...data?.data
                             }
+
+                            localStorage.setItem('user', JSON.stringify(newUser));
                             setLoggedInUser(newUser);
+                            setIsLoading(false);
+                            history.replace('/dashboard');
+                        } else {
                             const userDetail = { ...user };
-                            userDetail.error = "";
+                            userDetail.error = data.error;
                             setUser(userDetail);
                             setIsLoading(false);
                         }
@@ -94,7 +103,6 @@ const Login = () => {
                 setIsLoading(false);
             }
         }
-        event.preventDefault();
     }
 
     // For accessing user information from input and validating data
@@ -117,30 +125,6 @@ const Login = () => {
             newUser[event.target.name + "Valid"] = false;
             setUser(newUser);
         }
-    }
-
-    // For using to reduce repetition code
-    const handleLogInUser = (res, isReplace) => {
-        fetch('https://enigmatic-coast-10449.herokuapp.com/isAdmin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: res.email })
-        })
-            .then(res => res.json())
-            .then(data => {
-                const newUser = {
-                    email: res.email,
-                    name: res.displayName,
-                    error: '',
-                    photo: res.photoURL,
-                    isAdmin: data
-                }
-                setLoggedInUser(newUser);
-                setIsLoading(false);
-                isReplace && history.replace('/dashboard');
-            })
     }
 
     // Conditionally showing log in and create new account button
@@ -215,12 +199,6 @@ const Login = () => {
                                     <span>Don't have an account? <button className="create-btn focus:outline-none" onClick={() => handleLogInOrCreate()}>Create an account</button></span>
                             }
                         </h6>
-                    </div>
-                    <hr />
-                    <h5 className="text-center text-lg">Or</h5>
-                    <hr />
-                    <div className="text-center social-btn">
-                        <button onClick={googleSignIn}><FontAwesomeIcon icon={faGoogle} size="lg" /> Continue With Google</button><br />
                     </div>
 
                 </div>

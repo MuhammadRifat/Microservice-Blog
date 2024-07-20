@@ -13,9 +13,19 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import BlogDetails from './components/BlogDetails/BlogDetails';
 
 export const userContext = createContext();
+export const API_URL = {
+  USER: 'http://localhost:3000',
+  BLOG: 'http://localhost:3001',
+  COMMENT: 'http://localhost:3003',
+  LIKE: 'http://localhost:3002',
+  FILE: 'http://localhost:3004',
+  IMAGE: 'http://localhost:3004/uploads/images/original/',
+}
 
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState({});
+  const user = localStorage.getItem('user');
+
+  const [loggedInUser, setLoggedInUser] = useState(user ? JSON.parse(user) : {});
   return (
     <userContext.Provider value={[loggedInUser, setLoggedInUser]}>
       <Router>

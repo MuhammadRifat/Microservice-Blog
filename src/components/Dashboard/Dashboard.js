@@ -4,7 +4,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useHistory } from 'react-router-dom';
 import Blog from './Blog/Blog';
 import Loader from '../Loader/Loader';
-import { userContext } from '../../App';
+import { API_URL, userContext } from '../../App';
 import Header from '../Header/Header';
 import Dropdown from '../Header/Dropdown/Dropdown';
 
@@ -18,10 +18,10 @@ const Dashboard = () => {
     useEffect(() => {
         setIsLoading(true);
 
-        fetch('https://enigmatic-coast-10449.herokuapp.com/blogs')
+        fetch(`${API_URL.BLOG}/blog?authorId=${loggedInUser.id}`)
             .then(res => res.json())
             .then(data => {
-                setBlogs(data);
+                setBlogs(data.data);
                 setIsLoading(false);
             })
     }, [])
@@ -33,16 +33,17 @@ const Dashboard = () => {
 
     // handle blog searching
     const handleSearch = (e) => {
-        fetch('https://enigmatic-coast-10449.herokuapp.com/blogSearch', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ search: e.target.value })
+        const api = e.target.value ? `${API_URL.BLOG}/blog/auth/search?q=${e.target.value}` : `${API_URL.BLOG}/blog?authorId=${loggedInUser.id}`;
+        fetch(api, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${loggedInUser.token}` },
         })
             .then(res => res.json())
             .then(data => {
-                setBlogs(data);
+                setBlogs(data?.data || []);
+            })
+            .catch(error => {
+                setBlogs([]);
             })
     }
 
@@ -50,9 +51,9 @@ const Dashboard = () => {
     const handleDeleteBtn = (id) => {
         setIsLoading(true);
 
-        fetch('https://enigmatic-coast-10449.herokuapp.com/deleteBlog', {
+        fetch(`${API_URL.BLOG}/blog/${id}`, {
             method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${loggedInUser.token}` },
             body: JSON.stringify({ id: id })
         })
             .then(res => res.json())
@@ -82,7 +83,7 @@ const Dashboard = () => {
                             <div className="md:w-1/5 border-2 pl-4 py-4">
                                 <button onClick={handleNewPostBtn} className="border-2 rounded-lg p-2 px-4 shadow-md hover:shadow-xl font-bold text-green-700 text-lg"><FontAwesomeIcon icon={faPlus} /> New Post</button>
                             </div>
-                            
+
                             <div className=" border-2 md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
                                 {
                                     isLoading && <Loader />

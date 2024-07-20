@@ -4,22 +4,30 @@ import Blog from '../Dashboard/Blog/Blog';
 import Dropdown from '../Header/Dropdown/Dropdown';
 import Header from '../Header/Header';
 import Loader from '../Loader/Loader';
+import { API_URL } from '../../App';
 
 const Home = () => {
     const [blogs, setBlogs] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+        page: 1,
+        limit: 10
+    });
 
     // Load all blogs from the database
     useEffect(() => {
         setIsLoading(true);
 
-        fetch('https://enigmatic-coast-10449.herokuapp.com/blogs')
+        fetch(`${API_URL.BLOG}/blog?page=${pagination.page}&limit=${pagination.limit}`)
             .then(res => res.json())
             .then(data => {
-                setBlogs(data);
+                setBlogs(data?.data || []);
                 setIsLoading(false);
             })
-    }, [])
+            .catch((error) => {
+                console.log(error.message);
+            })
+    }, [pagination])
 
     const history = useHistory();
 
@@ -30,16 +38,20 @@ const Home = () => {
 
     // handle search bar
     const handleSearch = (e) => {
-        fetch('https://enigmatic-coast-10449.herokuapp.com/blogSearch', {
-            method: 'POST',
+        const api = e.target.value ? `${API_URL.BLOG}/blog/search?q=${e.target.value}` : `${API_URL.BLOG}/blog`;
+        fetch(api, {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ search: e.target.value })
         })
             .then(res => res.json())
             .then(data => {
-                setBlogs(data);
+                console.log(data);
+                setBlogs(data?.data);
+            })
+            .catch((error) => {
+                console.log(error.message);
             })
     }
 
@@ -61,12 +73,19 @@ const Home = () => {
                     {
                         !isLoading && !blogs.length && <h3 className="text-red-500 text-center mt-3">No Blogs Found.</h3>
                     }
-                    <div className="md:w-4/5 lg:grid lg:grid-cols-2 lg:px-12 sm:px-2">
+                    <div className="lg:grid lg:grid-cols-3 lg:px-12 sm:px-2">
                         {
                             blogs.map(blog => <Blog blog={blog} handleBlog={handleBlog} isAdmin={false} key={blog._id}></Blog>)
                         }
                     </div>
                 </div>
+            </div>
+
+            <div className='text-right p-8'>
+                <input className='border-2 mx-2 w-16' defaultValue={pagination.limit} onBlur={(e) => setPagination({ ...pagination, limit: e.target.value > 1 ? Number(e.target.value) : 10 })} />
+
+                <button className='border-0 mx-2' onClick={() => setPagination({ ...pagination, page: pagination.page > 1 ? pagination.page - 1 : 1 })}>Prev</button>
+                <button className='border-0 mx-2' onClick={() => setPagination({ ...pagination, page: pagination.page + 1 })}>Next</button>
             </div>
         </>
     );
