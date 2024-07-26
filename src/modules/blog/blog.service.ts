@@ -27,20 +27,115 @@ export class BlogService extends Service<Blog> {
     return await this.createOne(createBlogDto);
   }
 
-  // async createAll() {
-  //   const users = await this.userService.findAllByQuery({}, { page: 1, limit: 1000000 }, { ...this.userService.notSelect, email: 0, isActive: 0, isVerified: 0 });
-  //   const blogs: CreateBlogDto[] = users.data?.map((user, index) => {
-  //     return {
-  //       title: `2nd phase auto generated blogs ${index}`,
-  //       content: "2nd phase auto generated blogs",
-  //       authorId: user._id,
-  //       image: "default.png",
-  //     }
-  //   });
+  // bulk create blogs
+  async bulkCreate() {
+    const blogs = [];
 
-  //   this.createMany(blogs);
-  //   return blogs.length;
-  // }
+    for (let i = 100000; i < 300000; i++) {
+      blogs.push({
+        title: `${i} Core Concepts of ES6`,
+        content: `Functions:
+        Default Parameter Values:
+        Example:
+        
+        
+        In this example, getStudentData() function contains three parameters where age is default parameter. If age does not pass when calling getStudentData() function, It has a working default for age value 17.
+        
+        Working with un-named parameters:
+        Example:
+        
+        
+        In this code example, add() function has two-parameter. Each function has an arguments array that contains all passing parameters of a function. So, If any function has two parameters but doesn’t worry about its calling with three parameters, because the arguments array captured all values and we can get exact results with un-named parameters.
+        
+        Spread Operator: (three dots)
+        It used for copying an array.
+        Concatenation or combining an array.
+        Combining objects.
+        Example:
+        
+        
+        Arrow Function:
+        It gets shorter. It defines => symbol.
+        Example:
+        
+        
+        try…catch:
+        1. First, the code inside of try{} is executed.
+        2. If no error occurs, then catch (err) is ignored and skip catch.
+        3. if an error occurs, then stopped try{} execution and catch has executed.
+        
+        try…catch only works for runtime execution, it does not work for compile-time execution. This only works to avoid unwanted mistakes when there are no errors in the program.
+        
+        try…catch works synchronously. Because asynchronous javascript like
+        
+        setTimeout(function() {
+        noSuchVariable; // script will die here
+        }, 1000);
+        
+        It does not handle Call Stack, Call Stack’s Assistant Web Api handles it and sends it to CallBack Queue. After all, the execution of the call stack is finished, it comes inside the call stack in the reference of Event Loop, after which it shows the output.
+        
+        catch(error), the error is an object. It has two main properties:
+        1. name. (returns Error name)
+        2. message. (returns Textual Error message)
+        
+        Execution Context:
+        
+        When the Interpreter / Javascript Engine converts the code written in our language into machine language, it divides our code into pieces to reduce the complexity of interpretation. This is called the Execution context.
+        
+        Types of Execution Context:
+        1. Global Execution Context.
+        2. Function Execution Context.
+        
+        Global Execution Context:
+        1. Creates a global object.
+        2. Creates an object named this.
+        3. Make space in memory for functions and variables.
+        4. Sets the value of variables undefined.
+        
+        
+        Function Execution Context:
+        1. Creates a parameter/arguments object.
+        2. Creates an object named this.
+        3. Make space in memory for functions and variables.
+        4. Sets the value of variables undefined.
+        
+        
+        Reference Video: https://www.youtube.com/watch?v=Wk0-6b1W_VQ&t=0s
+        
+        Event Loop:
+        Event Loop connects between Call Stack and CallBack Queue, * Render Queue, ** MicroTask Queue. When there is no one to execute in the Call Stack except Main () then Event Loop removes the Call Stack with a CallBack function from CallBack Queue to execute. (* priority of execution)
+        
+        Example:
+        
+        
+        Hoisting:
+        
+        When the code in my text editor goes to the JavaScript compiler, the JavaScript engine pulls up all the variable declarations and sets the value of the variable undefined first (if there is a var). This is basically Hoisting. Later execution will set the value given by the programmer inside the variable. In the case of let, the value of the variable is undefined by default on the line on which we have declared the variable.
+        
+        Let’s be a little clearer, if we understand the Execution Context then the matter is easy. In the JavaScript program, all the global variables declared with var are first set to undefined in the Global Execution Context, and the functions are already initialized with the same name. When the code is executed, the values ​​given by the programmer sit inside the variable and the functions are executed. That’s what hosting is all about, with pre-set values.
+        
+        The same thing happens with Function Execution Context. As soon as the function is executed, the values ​​of all the variables declared inside it become undefined, and when the values ​​are executed, the original value sits on the variable.
+        
+        During compilation, the value of the variable declared as var becomes undefined.
+        
+        Example:
+        
+        
+        Reference Video Link: https://www.youtube.com/watch?v=pT9xqCS8Vwk&t=0s`,
+        authorId: i,
+        author: {
+          id: i,
+          name: `Muhammad Rifat ${i}`,
+          image: `172138463382721749627_whatsapp_image_2024_03_02_at_90234_am.jpeg`,
+        },
+        tags: ['JS', 'ES6'],
+        image: `172137181769870340082_download.png`,
+      });
+    }
+
+    await this.createMany(blogs);
+    return blogs.length;
+  }
 
   // find all by paginate
   async findAll(queryBlogDto: QueryBlogDto) {
@@ -50,7 +145,7 @@ export class BlogService extends Service<Blog> {
       restQuery._id = new mongoose.Types.ObjectId(restQuery._id);
     }
 
-    const blogs = await this.findAllByQuery(restQuery, { page, limit });
+    const blogs = await this.findAllByQuery(restQuery, { page, limit }, { content: 0 });
     return blogs;
 
   }
@@ -104,6 +199,7 @@ export class BlogService extends Service<Blog> {
       },
     );
 
+    console.log(result)
     return result;
   }
 

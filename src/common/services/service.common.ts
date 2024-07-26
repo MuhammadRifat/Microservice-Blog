@@ -23,7 +23,7 @@ export class Service<TDoc> {
 
     // create many
     async createMany(createDataDto: object[]) {
-        return await this.model.insertMany(createDataDto);
+         await this.model.insertMany(createDataDto);
     }
 
     // find all documents

@@ -14,7 +14,7 @@ export class BlogListenerController {
     })
     public async userUpdatedListener(user) {
         try {
-            console.log('user updated event captured: ', user);
+            console.log('user updated event captured: ', user.id);
             await this.blogService.updateAuthor(user);
 
             return new Nack(false);

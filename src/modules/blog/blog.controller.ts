@@ -30,15 +30,15 @@ export class BlogController {
     }
   }
 
-  // @Get('bulk-create')
-  // async bulkCreate() {
-  //   try {
-  //     return await this.blogService.createAll();
+  @Post('bulk-create')
+  async bulkCreate() {
+    try {
+      return await this.blogService.bulkCreate();
 
-  //   } catch (error) {
-  //     throw new HttpException(error.message, error.status);
-  //   }
-  // }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
 
   @Get()
   async findAll(@Query() queryBlogDto: QueryBlogDto) {
@@ -75,13 +75,13 @@ export class BlogController {
   @Get(':id')
   async findOne(@Param() { id }: MongoIdParams) {
     try {
-      const data = await this.blogService.findAll({ _id: id });
+      const data = await this.blogService.findOne(id);
 
       // increment views  
       this.blogService.incrementViews(id);
       return {
         success: true,
-        data: data.data?.[0]
+        data
       }
     } catch (error) {
       throw new HttpException(error.message, error.status);
