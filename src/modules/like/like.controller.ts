@@ -1,11 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, HttpException, Query, Req, UseGuards, NotFoundException } from '@nestjs/common';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
-import { UpdateLikeDto } from './dto/update-like.dto';
-import { IPaginate, MongoIdParams } from 'src/common/dtos/dto.common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/common/guards/user-auth.guard';
 import { QueryLikeDto } from './dto/query-like.dto';
+import mongoose from 'mongoose';
 
 @ApiTags('Like')
 @Controller('like')
@@ -30,7 +29,6 @@ export class LikeController {
   }
 
   @Get()
-  @UseGuards(UserAuthGuard)
   async findAll(@Query() queryLikeDto: QueryLikeDto) {
     try {
       return await this.likeService.findAll(queryLikeDto);
@@ -40,11 +38,35 @@ export class LikeController {
     }
   }
 
-  @Delete(':id')
+  @Get('is-liked')
   @UseGuards(UserAuthGuard)
-  async remove(@Param() { id }: MongoIdParams) {
+  async isLiked(
+    @Query('blogId') blogId: mongoose.Types.ObjectId,
+    @Req() req
+  ) {
     try {
-      const data = await this.likeService.remove(id);
+      const data = await this.likeService.findOneByQuery({
+        blogId,
+        userId: req.user.id
+      });
+
+      return {
+        success: true,
+        isLiked: data ? true : false
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Delete()
+  @UseGuards(UserAuthGuard)
+  async remove(
+    @Body('blogId') blogId: mongoose.Types.ObjectId,
+    @Req() req
+  ) {
+    try {
+      const data = await this.likeService.remove(blogId, req.user.id);
 
       return {
         success: true,

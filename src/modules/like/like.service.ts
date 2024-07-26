@@ -27,6 +27,7 @@ export class LikeService extends Service<Like> {
     };
 
     const isExist = await this.findOneByQuery({ blogId: createLikeDto.blogId, userId: createLikeDto.userId });
+    console.log(isExist);
     if (isExist) {
       throw new BadRequestException('already liked');
     }
@@ -102,8 +103,11 @@ export class LikeService extends Service<Like> {
   }
 
   // remove like by id
-  async remove(id: Types.ObjectId) {
-    const data = await this.removeById(id);
+  async remove(blogId: Types.ObjectId, userId: number) {
+    const data = await this.removeByQuery({
+      blogId,
+      userId
+    });
 
     if (!data) {
       throw new BadRequestException('delete failed.');
@@ -113,7 +117,10 @@ export class LikeService extends Service<Like> {
     await this.rabbitmqService.publish(
       'blog_management',
       'like_deleted',
-      data,
+      {
+        blogId,
+        userId
+      },
     );
     console.log('Event published successful');
     return data;
