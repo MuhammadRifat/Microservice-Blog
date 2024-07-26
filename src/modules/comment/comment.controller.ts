@@ -1,8 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
-import { IPaginate, MongoIdParams } from 'src/common/dtos/dto.common';
+import { MongoIdParams } from 'src/common/dtos/dto.common';
 import { ApiTags } from '@nestjs/swagger';
 import { UserAuthGuard } from 'src/common/guards/user-auth.guard';
 import { QueryCommentDto } from './dto/query-comment.dto';
