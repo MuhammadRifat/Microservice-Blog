@@ -14,6 +14,8 @@ const Home = () => {
         limit: 10
     });
 
+    const [resPagination, setResPagination] = useState({});
+
     // Load all blogs from the database
     useEffect(() => {
         setIsLoading(true);
@@ -21,6 +23,7 @@ const Home = () => {
         fetch(`${API_URL.BLOG}/blog?page=${pagination.page}&limit=${pagination.limit}`)
             .then(res => res.json())
             .then(data => {
+                setResPagination(data?.page);
                 setBlogs(data?.data || []);
                 setIsLoading(false);
             })
@@ -82,6 +85,8 @@ const Home = () => {
             </div>
 
             <div className='text-right p-8'>
+                <span>Total: <b>{resPagination.totalIndex || 0}</b></span>
+                <span className='mx-2'>Current Page: <b>{resPagination.currentPage || 0}</b></span>
                 <input className='border-2 mx-2 w-16' defaultValue={pagination.limit} onBlur={(e) => setPagination({ ...pagination, limit: e.target.value > 1 ? Number(e.target.value) : 10 })} />
 
                 <button className='border-0 mx-2' onClick={() => setPagination({ ...pagination, page: pagination.page > 1 ? pagination.page - 1 : 1 })}>Prev</button>

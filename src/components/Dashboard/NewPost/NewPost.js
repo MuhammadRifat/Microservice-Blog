@@ -40,7 +40,7 @@ const NewPost = () => {
                 setIsLoading(false);
             })
             .catch(function (error) {
-                console.log(error);
+                console.log(error.message);
                 setIsLoading(false);
             });
     }

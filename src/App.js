@@ -11,15 +11,16 @@ import Login from './components/Login/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 import BlogDetails from './components/BlogDetails/BlogDetails';
+import Profile from './components/Dashboard/Profile/Profile';
 
 export const userContext = createContext();
 export const API_URL = {
-  USER: 'http://localhost:3000',
-  BLOG: 'http://localhost:3001',
-  COMMENT: 'http://localhost:3003',
-  LIKE: 'http://localhost:3002',
-  FILE: 'http://localhost:3004',
-  IMAGE: 'http://localhost:3004/uploads/images/original/',
+  USER: 'http://localhost:3000/user-api',
+  BLOG: 'http://localhost:3000/blog-api',
+  COMMENT: 'http://localhost:3000/comment-api',
+  LIKE: 'http://localhost:3000/like-api',
+  FILE: 'http://localhost:3000/file-api',
+  IMAGE: 'http://localhost:3005/uploads/images/original/',
 }
 
 function App() {
@@ -44,6 +45,9 @@ function App() {
           </PrivateRoute>
           <PrivateRoute path="/new-post">
             <NewPost></NewPost>
+          </PrivateRoute>
+          <PrivateRoute path="/profile">
+            <Profile></Profile>
           </PrivateRoute>
           <Route exact path="/">
             <Home></Home>

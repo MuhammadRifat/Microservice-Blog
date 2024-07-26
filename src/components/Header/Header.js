@@ -32,7 +32,7 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
 
                 {
                     loggedInUser.email &&
-                    <img className=" ml-2 w-8 h-8 rounded-full" src={`${API_URL.IMAGE}${loggedInUser?.photo}`} alt="" />
+                    <Link to="/profile"><img className=" ml-2 w-8 h-8 rounded-full" src={`${API_URL.IMAGE}${loggedInUser?.photo}`} alt="" /></Link>
                 }
             </div>
 
