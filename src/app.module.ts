@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ConfigModule } from '@nestjs/config';
 import { join } from 'path';
@@ -10,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { KnexModule } from 'nest-knexjs';
 import knexConfig from 'config/knex-config';
 import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -18,11 +18,9 @@ import { RabbitmqModule } from './rabbitmq/rabbitmq.module';
     }),
     KnexModule.forRoot(knexConfig),
     RabbitmqModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
     UserModule,
     AuthModule,
+    PaymentModule
   ],
   controllers: [AppController],
   providers: [AppService],

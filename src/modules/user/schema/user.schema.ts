@@ -7,4 +7,5 @@ export class IUser extends MysqlCommonSchema {
     slug: string;
     password: string;
     isVerified: string;
+    image: string;
 }

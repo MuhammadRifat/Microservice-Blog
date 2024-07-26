@@ -8,7 +8,7 @@ import { RabbitmqModule } from 'src/rabbitmq/rabbitmq.module';
   imports: [
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_TEACHER_SECRET,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '365d' },
     }),
     RabbitmqModule

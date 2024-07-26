@@ -13,7 +13,7 @@ import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 export class UserService extends MysqlService<IUser> {
 
   constructor(
-    @InjectConnection() private knex: Knex,
+    @InjectConnection() private knex: Knex<any, IUser[]>,
     private readonly rabbitmqService: RabbitmqService,
   ) {
     super(knex, DB_TABLES.USER);
@@ -40,6 +40,7 @@ export class UserService extends MysqlService<IUser> {
     console.log('Event published successful');
     return user;
   }
+
 
   // find all by paginate
   async findAll(paginate: IPaginateMysql) {

@@ -31,7 +31,7 @@ async function bootstrap() {
     }),
   );
 
-  app.use(json({ limit: '5mb' }));
+  app.use(json({ limit: '500mb' }));
   app.useGlobalFilters(new HttpExceptionFilter());
 
   // swagger configuration

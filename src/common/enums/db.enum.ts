@@ -1,3 +1,4 @@
 export enum DB_TABLES {
-    USER = 'user'
+    USER = 'user',
+    PAYMENT = 'payment',
 }

@@ -29,6 +29,20 @@ export class AuthController {
         }
     }
 
+    @Post('user/register/bulk')
+    async bulkCreate() {
+        try {
+            const data = await this.authService.bulkCreate();
+
+            return {
+                success: true,
+                data
+            }
+        } catch (error) {
+            throw new HttpException(error.message, error.status);
+        }
+    }
+
     @Post('user/login')
     async login(@Body() loginDto: LoginDto) {
         try {

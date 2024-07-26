@@ -59,15 +59,15 @@ export class MysqlService<TDoc> {
     }
 
     // create many
-    protected async createMany(createDataDto: object[]) {
+    async createMany(createDataDto: object[]) {
         const insertedIds = await this.knexModel.table(this.tableName).insert(createDataDto);
-        if (!insertedIds.length) {
-            throw new InternalServerErrorException('insert failed');
-        }
+        // if (!insertedIds.length) {
+        //     throw new InternalServerErrorException('insert failed');
+        // }
 
-        const data = <TDoc[]>await this.knexModel.table(this.tableName).whereIn('id', insertedIds);
+        // const data = <TDoc[]>await this.knexModel.table(this.tableName).whereIn('id', insertedIds);
 
-        return data;
+        // return data;
     }
 
     // find all documents by query
@@ -81,7 +81,7 @@ export class MysqlService<TDoc> {
         const { skip, currentPage, perPage } = this.pagination(paginate);
 
 
-        const [{ total }] = await this.knexModel.table(this.tableName).where({ ...query, deletedAt: null }).count("* as total");
+        const [{ total }] = await this.knexModel.table(this.tableName).where({ ...query, deletedAt: null }).count("id as total");
 
         const data = <TDoc[]>await this.knexModel.table(this.tableName)
             .where({ ...query, deletedAt: null })
@@ -90,7 +90,7 @@ export class MysqlService<TDoc> {
             .orderBy("id", "desc");
 
 
-        return this.paginateResponse<TDoc>({ currentPage, perPage, total, data });
+        return this.paginateResponse<TDoc>({ currentPage, perPage, total, data});
     }
 
     // find one document
