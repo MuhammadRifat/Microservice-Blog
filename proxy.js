@@ -1,10 +1,12 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const rateLimit = require('express-rate-limit');
+const express = require('express');
+const { ROUTES } = require('./route');
 
-const setupProxies = (app, routes) => {
-    routes.forEach(route => {
-        app.use(route.url, rateLimit(route.rateLimit), createProxyMiddleware(route.proxy))
-    })
-}
+const router = express.Router();
 
-exports.setupProxies = setupProxies;
+ROUTES.forEach(route => {
+    router.use(route.url, rateLimit(route.rateLimit), createProxyMiddleware(route.proxy))
+})
+
+exports.appRouter = router;
