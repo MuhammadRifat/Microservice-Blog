@@ -20,7 +20,7 @@ export const API_URL = {
   COMMENT: 'http://localhost:3000/comment-api',
   LIKE: 'http://localhost:3000/like-api',
   FILE: 'http://localhost:3000/file-api',
-  IMAGE: 'http://localhost:3005/uploads/images/original/',
+  IMAGE: 'http://localhost:3000/file-api/uploads/images/original/',
 }
 
 function App() {
