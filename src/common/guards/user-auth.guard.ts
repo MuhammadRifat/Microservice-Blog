@@ -6,7 +6,6 @@ import {
     UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import axios from 'axios';
 import { RabbitmqService } from 'src/rabbitmq/rabbitmq.service';
 
 @Injectable()
