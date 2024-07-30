@@ -58,7 +58,7 @@ let UserService = class UserService extends mysql_service_common_1.MysqlService 
         }
         delete user?.password;
         console.log('user updated. Publishing Rabbitmq event');
-        await this.rabbitmqService.publish('user_management', 'user_updated', user);
+        this.rabbitmqService.publish('user_management', 'user_updated', user);
         console.log('Event published successful');
         return user;
     }
