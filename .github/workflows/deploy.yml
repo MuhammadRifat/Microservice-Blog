@@ -1,0 +1,28 @@
+name: Blog User Service
+
+on:
+  push:
+    branches:
+      - user
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Commands to deploy the application on the server
+            cd projects/blog-microservice/backend/user
+            git stash
+            git pull origin user --no-ff
+            pm2 stop blog_user_7011
+            pm2 delete blog_user_7011
+            pm2 start "npm run prod" --name blog_user_7011
