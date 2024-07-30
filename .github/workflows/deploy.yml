@@ -20,7 +20,7 @@ jobs:
           port: 22
           script: |
             # Commands to deploy the application on the server
-            cd /projects/blog-microservice/frontend
+            cd projects/blog-microservice/frontend
             git stash
             git pull origin frontend --no-ff
             pm2 stop blog_frontend_7000
