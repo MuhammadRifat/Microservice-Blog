@@ -15,12 +15,12 @@ import Profile from './components/Dashboard/Profile/Profile';
 
 export const userContext = createContext();
 export const API_URL = {
-  USER: 'http://localhost:3000/user-api',
-  BLOG: 'http://localhost:3000/blog-api',
-  COMMENT: 'http://localhost:3000/comment-api',
-  LIKE: 'http://localhost:3000/like-api',
-  FILE: 'http://localhost:3000/file-api',
-  IMAGE: 'http://localhost:3000/file-api/uploads/images/original/',
+  USER: 'http://localhost:7010/user-api',
+  BLOG: 'http://localhost:7010/blog-api',
+  COMMENT: 'http://localhost:7010/comment-api',
+  LIKE: 'http://localhost:7010/like-api',
+  FILE: 'http://localhost:7010/file-api',
+  IMAGE: 'http://localhost:7010/file-api/uploads/images/original/',
 }
 
 function App() {
