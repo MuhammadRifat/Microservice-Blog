@@ -17,7 +17,12 @@ let RabbitmqService = class RabbitmqService {
         this.amqpConnection = amqpConnection;
     }
     async publish(exchange, routingKey, msg, options) {
-        this.amqpConnection.publish(exchange, routingKey, msg, { persistent: true });
+        try {
+            await this.amqpConnection.publish(exchange, routingKey, msg, { persistent: true });
+        }
+        catch (error) {
+            console.log(error.message);
+        }
     }
 };
 exports.RabbitmqService = RabbitmqService;

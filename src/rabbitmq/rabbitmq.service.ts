@@ -11,6 +11,10 @@ export class RabbitmqService {
     msg: object,
     options?: object,
   ) {
-    this.amqpConnection.publish(exchange, routingKey, msg,  { persistent: true });
+    try {
+      await this.amqpConnection.publish(exchange, routingKey, msg, { persistent: true });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }

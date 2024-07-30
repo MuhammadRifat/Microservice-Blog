@@ -33,9 +33,6 @@ let UserService = class UserService extends mysql_service_common_1.MysqlService 
         }
         const user = await this.createOne(createUserDto);
         delete user?.password;
-        console.log('user created. Publishing Rabbitmq event');
-        await this.rabbitmqService.publish('user_management', 'user_created', user);
-        console.log('Event published successful');
         return user;
     }
     async findAll(paginate) {

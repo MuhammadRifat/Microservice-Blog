@@ -31,13 +31,6 @@ export class UserService extends MysqlService<IUser> {
     const user = await this.createOne(createUserDto);
     delete user?.password;
 
-    console.log('user created. Publishing Rabbitmq event');
-    await this.rabbitmqService.publish(
-      'user_management',
-      'user_created',
-      user,
-    );
-    console.log('Event published successful');
     return user;
   }
 
