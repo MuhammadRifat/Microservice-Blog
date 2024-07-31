@@ -19,7 +19,7 @@ let RabbitmqService = class RabbitmqService {
     async publish(exchange, routingKey, msg, options) {
         this.amqpConnection.publish(exchange, routingKey, msg, options || { persistent: true });
     }
-    async request(exchange, routingKey, payload, timeout = 10000) {
+    async request(exchange, routingKey, payload, timeout = 3000) {
         return this.amqpConnection.request({ exchange, routingKey, payload, timeout });
     }
 };

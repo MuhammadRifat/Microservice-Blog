@@ -23,7 +23,8 @@ jobs:
             cd projects/blog-microservice/backend/blog
             git stash
             git pull origin blog --no-ff
-            npm run migration
+            yarn
+            yarn build
             pm2 stop blog_blog_7012
             pm2 delete blog_blog_7012
             pm2 start "npm run prod" --name blog_blog_7012
