@@ -40,8 +40,11 @@ const Home = () => {
     }
 
     // handle search bar
-    const handleSearch = (e) => {
-        const api = e.target.value ? `${API_URL.BLOG}/blog/search?q=${e.target.value}` : `${API_URL.BLOG}/blog`;
+    const handleSearch = (search) => {
+
+        setBlogs([]);
+        setIsLoading(true);
+        const api = search ? `${API_URL.BLOG}/blog/search?q=${search}` : `${API_URL.BLOG}/blog`;
         fetch(api, {
             method: 'GET',
             headers: {
@@ -50,10 +53,13 @@ const Home = () => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log(data);
+                setIsLoading(false);
                 setBlogs(data?.data);
+
             })
             .catch((error) => {
+
+                setIsLoading(false);
                 console.log(error.message);
             })
     }

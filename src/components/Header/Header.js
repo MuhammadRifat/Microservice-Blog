@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_URL, userContext } from '../../App';
 import logo from '../../Images/default-monochrome.svg';
@@ -6,6 +6,7 @@ import avater from '../../Images/avater.png';
 
 const Header = ({ toggle, isVisible, handleSearch }) => {
     const [loggedInUser] = useContext(userContext);
+    const [search, setSearch] = useState('');
 
     // Navbar
     return (
@@ -17,7 +18,10 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
             {/* conditionally shows search bar */}
             {
                 isVisible &&
-                <input type="text" onChange={(e) => handleSearch(e)} className="border-2 border-black border-opacity-25 rounded-md w-2/5 p-1" placeholder="Search" />
+                <div className='flex w-5/6 justify-center'>
+                    <input type="text" onChange={(e) => setSearch(e.target.value)} className="border-2 border-black border-opacity-25 rounded-md w-2/5 p-1" placeholder="Search" />
+                    <button onClick={() => handleSearch(search)} className='border-2 border-black border-opacity-25 rounded-md p-1 bg-gray-200'>Search</button>
+                </div>
             }
 
             <div className="flex pr-8">
