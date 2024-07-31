@@ -28,7 +28,7 @@ export class CommentService extends Service<Comment> {
 
     const comment = await this.createOne(createCommentDto);
     console.log('comment created. Publishing Rabbitmq event');
-    await this.rabbitmqService.publish(
+     this.rabbitmqService.publish(
       'blog_management',
       'comment_created',
       comment,
@@ -93,7 +93,7 @@ export class CommentService extends Service<Comment> {
     }
 
     console.log('comment deleted. Publishing Rabbitmq event');
-    await this.rabbitmqService.publish(
+     this.rabbitmqService.publish(
       'blog_management',
       'comment_deleted',
       data,

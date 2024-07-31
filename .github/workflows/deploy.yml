@@ -1,0 +1,30 @@
+name: Comment Service
+
+on:
+  push:
+    branches:
+      - comment
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+
+    steps:
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            # Commands to deploy the application on the server
+            cd projects/blog-microservice/backend/comment
+            git stash
+            git pull origin comment --no-ff
+            yarn
+            yarn build
+            pm2 stop blog_comment_7013
+            pm2 delete blog_comment_7013
+            pm2 start "npm run prod" --name blog_comment_7013
