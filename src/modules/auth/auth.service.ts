@@ -47,21 +47,21 @@ export class AuthService {
     }
 
     // bulk create
-    async bulkCreate() {
+    async bulkCreate(start: number, end: number) {
         const users = [];
         const password = await this.generateHash('123456');
 
-        // for (let i = 1000000; i < 1100001; i++) {
-        //     users.push({
-        //         firstName: `Muhammad Rifat`,
-        //         lastName: `${i}`,
-        //         email: `rifat${i}@gmail.com`,
-        //         password: password,
-        //         image: `172138463382721749627_whatsapp_image_2024_03_02_at_90234_am.jpeg`,
-        //     });
-        // }
+        for (let i = start; i < end; i++) {
+            users.push({
+                firstName: `Muhammad Rifat`,
+                lastName: `${i}`,
+                email: `rifat${i}@gmail.com`,
+                password: password,
+                image: `172138463382721749627_whatsapp_image_2024_03_02_at_90234_am.jpeg`,
+            });
+        }
 
-        // await this.userService.createMany(users);
+        await this.userService.createMany(users);
         return users.length;
     }
 

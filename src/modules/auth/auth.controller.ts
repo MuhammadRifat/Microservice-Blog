@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { BadGatewayException, Body, Controller, Get, HttpException, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/auth.dto';
 import { CreateUserDto } from '../user/dto/create-user.dto';
@@ -30,9 +30,13 @@ export class AuthController {
     }
 
     @Post('user/register/bulk')
-    async bulkCreate() {
+    async bulkCreate(@Query() query) {
         try {
-            const data = await this.authService.bulkCreate();
+            const { start, end } = query;
+            if (!start || !end) {
+                throw new BadGatewayException('star, end required');
+            }
+            const data = await this.authService.bulkCreate(Number(start), Number(end));
 
             return {
                 success: true,
