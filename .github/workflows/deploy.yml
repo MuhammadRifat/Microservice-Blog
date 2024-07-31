@@ -24,6 +24,8 @@ jobs:
             git stash
             git pull origin user --no-ff
             npm run migration
+            yarn
+            yarn build
             pm2 stop blog_user_7011
             pm2 delete blog_user_7011
             pm2 start "npm run prod" --name blog_user_7011
