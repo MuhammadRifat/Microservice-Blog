@@ -11,15 +11,24 @@ export class RabbitmqService {
     msg: object,
     options?: object,
   ) {
-    this.amqpConnection.publish(exchange, routingKey, msg, options || { persistent: true });
+    try {
+      await this.amqpConnection.publish(exchange, routingKey, msg, options || { persistent: true });
+
+    } catch (error) {
+      console.log(error.message)
+    }
   }
 
   async request(
     exchange: string,
     routingKey: string,
     payload: object,
-    timeout = 10000, // optional timeout for how long the request
+    timeout = 3000, // optional timeout for how long the request
   ) {
-    return this.amqpConnection.request({ exchange, routingKey, payload, timeout });
+    try {
+      return await this.amqpConnection.request({ exchange, routingKey, payload, timeout });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }

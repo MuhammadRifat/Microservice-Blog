@@ -34,7 +34,7 @@ export class LikeService extends Service<Like> {
 
     const like = await this.createOne(createLikeDto);
     console.log('like created. Publishing Rabbitmq event');
-    await this.rabbitmqService.publish(
+     this.rabbitmqService.publish(
       'blog_management',
       'like_created',
       like,
@@ -114,7 +114,7 @@ export class LikeService extends Service<Like> {
     }
 
     console.log('like deleted. Publishing Rabbitmq event');
-    await this.rabbitmqService.publish(
+     this.rabbitmqService.publish(
       'blog_management',
       'like_deleted',
       {
