@@ -24,7 +24,6 @@ jobs:
             git stash
             git pull origin api-gateway --no-ff
             yarn
-            yarn build
             pm2 stop blog_api_gateway_7010
             pm2 delete blog_api_gateway_7010
             pm2 start "npm start" --name blog_api_gateway_7010
