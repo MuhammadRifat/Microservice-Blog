@@ -28,10 +28,10 @@ export class BlogService extends Service<Blog> {
   }
 
   // bulk create blogs
-  async bulkCreate() {
+  async bulkCreate(start: number, end: number) {
     const blogs = [];
 
-    for (let i = 100000; i < 300000; i++) {
+    for (let i = start; i < end; i++) {
       blogs.push({
         title: `${i} Core Concepts of ES6`,
         content: `Functions:

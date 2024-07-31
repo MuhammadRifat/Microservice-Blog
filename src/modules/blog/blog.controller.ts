@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpException, Query, Req, UseGuards, BadRequestException, BadGatewayException } from '@nestjs/common';
 import { BlogService } from './blog.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
@@ -31,9 +31,13 @@ export class BlogController {
   }
 
   @Post('bulk-create')
-  async bulkCreate() {
+  async bulkCreate(@Query() query) {
     try {
-      return await this.blogService.bulkCreate();
+      const { start, end } = query;
+      if (!start || !end) {
+        throw new BadGatewayException('star, end required');
+      }
+      return await this.blogService.bulkCreate(Number(start), Number(end));
 
     } catch (error) {
       throw new HttpException(error.message, error.status);
