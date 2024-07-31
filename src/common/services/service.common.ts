@@ -1,7 +1,6 @@
 import { BadRequestException } from "@nestjs/common";
 import { Model, Types } from "mongoose";
 import { IPaginate } from "../dtos/dto.common";
-import * as bcrypt from 'bcrypt';
 
 export class Service<TDoc> {
     private DEFAULT_LIMIT = 10;

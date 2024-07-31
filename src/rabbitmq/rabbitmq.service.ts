@@ -20,6 +20,10 @@ export class RabbitmqService {
     payload: object,
     timeout = 3000, // optional timeout for how long the request
   ) {
-    return this.amqpConnection.request({ exchange, routingKey, payload, timeout });
+    try {
+      return await this.amqpConnection.request({ exchange, routingKey, payload, timeout });
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 }
