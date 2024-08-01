@@ -32,8 +32,8 @@ const Dashboard = () => {
     }
 
     // handle blog searching
-    const handleSearch = (e) => {
-        const api = e.target.value ? `${API_URL.BLOG}/blog/auth/search?q=${e.target.value}` : `${API_URL.BLOG}/blog?authorId=${loggedInUser.id}`;
+    const handleSearch = (search) => {
+        const api = search ? `${API_URL.BLOG}/blog/auth/search?q=${search}` : `${API_URL.BLOG}/blog?authorId=${loggedInUser.id}`;
         fetch(api, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${loggedInUser.token}` },
