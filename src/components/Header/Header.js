@@ -11,15 +11,15 @@ const Header = ({ toggle, isVisible, handleSearch }) => {
     // Navbar
     return (
         <nav className="flex justify-between items-center h-16 bg-white-500 text-black relative shadow-md font-mono" role="navigation">
-            <Link to="/home">
+            <Link to="/">
                 <img className="w-36 ml-6" src={logo} alt="" />
             </Link>
 
             {/* conditionally shows search bar */}
             {
                 isVisible &&
-                <div className='flex w-5/6 justify-center'>
-                    <input type="text" onChange={(e) => setSearch(e.target.value)} className="border-2 border-black border-opacity-25 rounded-md w-2/5 p-1" placeholder="Search" />
+                <div className='flex w-1/3 justify-center'>
+                    <input type="text" onChange={(e) => setSearch(e.target.value)} className="border-2 border-black border-opacity-25 w-full rounded-md p-1" placeholder="Search" />
                     <button onClick={() => handleSearch(search)} className='border-2 border-black border-opacity-25 rounded-md p-1 bg-gray-200'>Search</button>
                 </div>
             }
