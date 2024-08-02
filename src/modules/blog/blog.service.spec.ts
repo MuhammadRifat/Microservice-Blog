@@ -14,6 +14,7 @@ const mockBlog = {
   authorId: new Types.ObjectId(),
   save: jest.fn().mockResolvedValue(this),
   toJSON: jest.fn().mockReturnValue(this),
+  select: jest.fn().mockReturnValue(this),
 };
 
 // Define a mock blog model that mimics Mongoose's model behavior
@@ -23,9 +24,11 @@ const mockBlogModel = {
     _id: new Types.ObjectId(),
     save: jest.fn().mockResolvedValue(mockBlog),
     toJSON: jest.fn().mockReturnValue(mockBlog),
+    select: jest.fn().mockReturnValue(mockBlog),
   })),
   create: jest.fn().mockResolvedValue(mockBlog),
   findById: jest.fn().mockResolvedValue(mockBlog),
+  findOne: jest.fn().mockResolvedValue(mockBlog),
   findByIdAndUpdate: jest.fn().mockResolvedValue(mockBlog),
   findByIdAndRemove: jest.fn().mockResolvedValue(mockBlog),
   countDocuments: jest.fn().mockResolvedValue(1),
@@ -69,8 +72,13 @@ describe('BlogService', () => {
 
   describe('create', () => {
     it('should create a blog', async () => {
-      const createBlogDto = { title: 'Test Blog', content: 'Test Content', authorId: mockBlog.authorId };
-      const result = await service.create(createBlogDto);
+      const createBlogDto = { title: 'Test Blog', content: 'Test Content' };
+      const author = {
+        id: 1,
+        firstName: "Rifat",
+        image: null
+      }
+      const result = await service.create(author, createBlogDto);
       expect(result).toEqual(mockBlog);
     });
   });
