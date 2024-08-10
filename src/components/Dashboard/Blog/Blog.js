@@ -12,10 +12,10 @@ const Blog = ({ blog, handleDeleteBtn, isAdmin, handleBlog }) => {
         <div className="lg:w-full">
             <div onClick={!isAdmin ? () => handleBlog(_id) : undefined} className="mx-3 mt-5 shadow-md rounded-md hover:shadow-xl" style={!isAdmin ? { cursor: 'pointer' } : {}}>
                 <div>
-                    <img className="w-96 h-48 rounded-t-md" src={`${API_URL.IMAGE}${image}`} alt="" />
+                    <img className="w-full h-48 rounded-t-md" src={`${API_URL.IMAGE}${image}`} alt="" />
                 </div>
                 <div className="p-2">
-                    <h2 className="text-xl font-bold text-gray-500">{title}</h2>
+                    <h2 className="text-xl font-bold text-gray-500" style={{overflowX: "auto"}}>{title}</h2>
                     <div className="flex justify-between text-gray-500">
                         <div className='text-sm'>
                             <span>Published: {new Date(createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>

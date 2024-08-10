@@ -127,8 +127,8 @@ const BlogDetails = () => {
                 <div className="w-full lg:w-1/2 md:w-4/5 p-2 m-2">
                     {
                         isLoading && <Loader />
-                    }
-                    <h1 className="text-center text-3xl font-bold text-gray-700">{blog?.title}</h1>
+                    } 
+                    <h1 className="text-center text-3xl font-bold text-gray-700" style={{overflowX: "auto"}}>{blog?.title}</h1>
 
                     <div className="flex justify-between text-gray-600 mt-8">
                         <div className="flex">
