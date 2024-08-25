@@ -154,14 +154,9 @@ export class BlogService extends Service<Blog> {
     const staticQuery = authorId ? { authorId } : {};
 
     if (authorId) {
-      return await this.blogModel.find({ $text: { $search: title }, ...staticQuery }).select({
-        content: 0,
-        deletedAt: 0,
-        __v: 0,
-        createdBy: 0
-      });;
+      return await this.searchByAnyCharacter({ title: title }, staticQuery);
     }
-    // return await this.searchByAnyCharacter({ title: title }, staticQuery);
+    
     return await this.blogModel.find({ $text: { $search: title } }).limit(50).select({
       content: 0,
       deletedAt: 0,
