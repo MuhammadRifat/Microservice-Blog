@@ -57,7 +57,12 @@ export class BlogController {
   @Get('search')
   async search(@Query('q') q: string) {
     try {
-      return await this.blogService.search(q);
+      const data = await this.blogService.search(q);
+
+      return {
+        success: true,
+        data
+      }
 
     } catch (error) {
       throw new HttpException(error.message, error.status);
