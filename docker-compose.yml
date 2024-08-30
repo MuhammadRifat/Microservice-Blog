@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root-jkkniu
+      MONGO_INITDB_ROOT_PASSWORD: jkkniuserver2006
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  app:
+    build: .
+    container_name: nestjs_blog_app
+    environment:
+      MONGO_URL: mongodb://root-jkkniu:jkkniuserver2006@103.28.121.117:27017/microservice_blog?authSource=admin&readPreference=primary&directConnection=true&ssl=false
+      RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
+    ports:
+      - "7012:7012"
+    depends_on:
+      - mongo
+      - rabbitmq
+
+volumes:
+  mongo-data:
