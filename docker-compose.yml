@@ -29,7 +29,7 @@ services:
       MONGO_URL: mongodb://root-jkkniu:jkkniuserver2006@103.28.121.117:27017/microservice_blog?authSource=admin&readPreference=primary&directConnection=true&ssl=false
       RABBITMQ_URL: amqp://guest:guest@rabbitmq:5672/
     ports:
-      - "7012:7012"
+      - "7777:7012"
     depends_on:
       - mongo
       - rabbitmq
