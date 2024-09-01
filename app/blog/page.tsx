@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IBlog } from './blog.interface';
 import { BlogService } from './blog.service';
 import BlogDesign from './blog.design';
-export default function BlogLogic() {
+export default function BlogPage() {
     const [data, setData] = useState<IBlog[]>([]);
 
     useEffect(() => {
